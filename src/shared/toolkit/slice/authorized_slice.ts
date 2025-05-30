@@ -2,11 +2,13 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export type AuthorizedState = {
 	Status: boolean;
+	Name: string | null;
 	Role: string | null;
 };
 const initialState = {
 	Status: false,
 	Role: null,
+	Name: "Guest",
 } as AuthorizedState;
 
 export const authorized = createSlice({
@@ -18,9 +20,10 @@ export const authorized = createSlice({
 			state: AuthorizedState,
 			action: PayloadAction<AuthorizedState>,
 		) => {
-			const { Status, Role } = action.payload;
+			const { Status, Role, Name } = action.payload;
 			state.Status = Status !== undefined ? Status : state.Status;
 			state.Role = Role !== undefined ? Role : state.Role;
+			state.Name = Name !== undefined ? Name : state.Name;
 		},
 	},
 });

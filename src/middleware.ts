@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ENV } from "./configs/environment";
+import { PATH } from "./shared/path";
 
 export async function middleware(request: NextRequest) {
   // Skip middleware for RSC requests
@@ -11,16 +13,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-//   const pathname = request.nextUrl.pathname;
-//   const hasToken = request.cookies.get(ENV.TOKEN_KEY)?.value;
+  const pathname = request.nextUrl.pathname;
+  const hasToken = request.cookies.get(ENV.TOKEN_KEY)?.value;
 
-//   if (pathname.startsWith(PATH.AUTH.LOGIN) && hasToken) {
-//     return NextResponse.redirect(new URL(PATH.HOME, request.url));
-//   }
+  if (pathname === PATH.AUTH.LOGIN && hasToken) {
+    return NextResponse.redirect(new URL(PATH.HOME, request.url));
+  }
 
-//   if (pathname.startsWith(PATH.HOME) && !hasToken) {
-//     return NextResponse.redirect(new URL(PATH.AUTH.LOGIN, request.url));
-//   }
+  if (pathname.startsWith(PATH.HOME) && !hasToken) {
+    return NextResponse.redirect(new URL(PATH.AUTH.LOGIN, request.url));
+  }
 
   return NextResponse.next();
 }
