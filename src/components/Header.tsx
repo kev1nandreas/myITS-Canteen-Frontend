@@ -31,7 +31,7 @@ export default function Header() {
     <header className="flex items-center h-[4rem] border-b-[1px] border-slate-300 bg-white justify-between px-[2rem]">
       <div className="flex items-center cursor-pointer">
         <IoMdMenu
-          className="text-2xl mr-[2rem] md:hidden"
+          className="text-2xl mr-[1.5rem] md:hidden"
           onClick={e => {
             e.stopPropagation();
             setSidebar.setSidebar(!isOpenSidebar);
@@ -48,7 +48,7 @@ export default function Header() {
         />
       </div>
       <div className="flex gap-3 items-center">
-        <p>{name}</p>
+        <p className="md:block hidden">{name}</p>
         <div className="p-3 rounded-full bg-gradient-to-br from-blue-600 to-blue-300 text-white font-semibold">
           <FaRegUser />
         </div>
