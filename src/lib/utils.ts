@@ -34,11 +34,34 @@ export const useSetMe = () => {
   };
 };
 
+export const useGetSidebar = () => {
+  const isOpen = useSelector((state: any) => state.sidebar.isOpen);
+  return { isOpen };
+};
+
+export const useSetSidebar = () => {
+  const dispatch = useDispatch();
+  return {
+    setSidebar: (isOpen: boolean) => {
+      dispatch({
+        type: "sidebar/setSidebarState",
+        payload: isOpen,
+      });
+    },
+  };
+};
+
 export const encrypt = (text: string): string => {
-  return CryptoJS.AES.encrypt(text, process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "default_key").toString();
-}
+  return CryptoJS.AES.encrypt(
+    text,
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "default_key"
+  ).toString();
+};
 
 export const decrypt = (ciphertext: string): string => {
-  const bytes = CryptoJS.AES.decrypt(ciphertext, process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "default_key");
+  const bytes = CryptoJS.AES.decrypt(
+    ciphertext,
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "default_key"
+  );
   return bytes.toString(CryptoJS.enc.Utf8);
-}
+};
