@@ -8,7 +8,7 @@ export type AuthorizedState = {
 const initialState = {
 	Status: false,
 	Role: null,
-	Name: "Guest",
+	Name: null,
 } as AuthorizedState;
 
 export const authorized = createSlice({

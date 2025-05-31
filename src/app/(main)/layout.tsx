@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { ProviderReduxToolkit } from "@/modules/providers/redux_provider";
 import QueryProvider from "@/modules/providers/query_provider";
 import { Toaster } from "react-hot-toast";
+import Header from "@/components/Header";
+import Sidebar from "@/containers/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,8 +37,12 @@ export default function RootLayout({
       >
         <ProviderReduxToolkit>
           <QueryProvider>
-            <Toaster position="top-center" />
-            {children}
+            <Header />
+            <div className="flex justify-between">
+              <Toaster position="top-center" />
+              <Sidebar />
+              {children}
+            </div>
           </QueryProvider>
         </ProviderReduxToolkit>
       </body>
