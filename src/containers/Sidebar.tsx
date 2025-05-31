@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosLogOut } from "react-icons/io";
 import MenuSidebar from "@/components/MenuSidebar";
@@ -11,9 +11,14 @@ import { useLogout } from "@/services/api/hook/useAuth";
 import toast from "react-hot-toast";
 import { removeCookies } from "@/modules/cookies";
 import { ENV } from "@/configs/environment";
+import { useGetMe, useGetSidebar, useSetSidebar } from "@/lib/utils";
 
 export default function Sidebar() {
   const router = useRouter();
+  const { role } = useGetMe();
+  const { isOpen } = useGetSidebar();
+  const ref = useRef<HTMLDivElement>(null);
+  const { setSidebar } = useSetSidebar();
 
   const mutation = useLogout({
     onSuccess: () => {
@@ -30,39 +35,72 @@ export default function Sidebar() {
     await mutation.mutateAsync();
   };
 
-  const menuItems = [
-    { menu: "Menu", icon: IoFastFood, redirect: "/" },
-    { menu: "Keranjang", icon: IoCart, redirect: "/trash" },
-    { menu: "Histori", icon: RiBillLine, redirect: "/events" },
-    { menu: "Profil", icon: FaRegUserCircle, redirect: "/liked" },
-  ];
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setSidebar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setSidebar]);
 
   return (
-    <div className="flex flex-col items-center justify-between w-[20%] gap-2 bg-white p-3 h-[calc(100vh-4rem)]">
+    <div
+      className={`md:flex fixed top-[4rem] md:top-0 flex-col items-center justify-between md:w-[20%] w-[15rem] gap-2 bg-white p-3 h-[calc(100vh-4rem)] transform transition-transform duration-300 ease-in-out ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 md:relative `}
+      ref={ref}
+    >
       <div className="w-full flex flex-col gap-2">
         {/* Menu */}
         <div className="flex flex-col w-full gap-1 pt-2">
-          {menuItems.map((item, index) => (
-            <MenuSidebar
-              key={index}
-              menu={item.menu}
-              icon={item.icon}
-              location={item.redirect}
-            />
-          ))}
+          {role === "user" &&
+            menuItems.map((item, index) => (
+              <MenuSidebar
+                key={index}
+                menu={item.menu}
+                icon={item.icon}
+                location={item.redirect}
+              />
+            ))}
+          {role === "guest" &&
+            menuItems
+              .slice(0, 2)
+              .map((item, index) => (
+                <MenuSidebar
+                  key={index}
+                  menu={item.menu}
+                  icon={item.icon}
+                  location={item.redirect}
+                />
+              ))}
         </div>
       </div>
 
       {/* Log Out */}
-      <div
-        className="flex gap-3 w-full p-3 md:px-5 border-2 font-semibold text-red-500 border-red-500 hover:text-blue-400 md:hover:text-white cursor-pointer select-none duration-300 transition-all ease-in-out rounded-lg md:hover:bg-red-500 items-center justify-center md:justify-start"
-        onClick={() => {
-          handleLogout();
-        }}
-      >
-        {<IoIosLogOut className="text-[1.5rem]" />}
-        <p className="font-medium md:block hidden">Log Out</p>
-      </div>
+      {role === "admin" ||
+        (role === "user" && (
+          <div
+            className="flex gap-3 w-full p-3 md:px-5 border-2 font-semibold text-red-500 border-red-500 hover:text-blue-400 md:hover:text-white cursor-pointer select-none duration-300 transition-all ease-in-out rounded-lg md:hover:bg-red-500 items-center justify-start"
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            {<IoIosLogOut className="text-[1.5rem]" />}
+            <p className="font-medium">Log Out</p>
+          </div>
+        ))}
     </div>
   );
 }
+
+const menuItems = [
+  { menu: "Menu", icon: IoFastFood, redirect: "/" },
+  { menu: "Keranjang", icon: IoCart, redirect: "/trash" },
+  { menu: "Histori", icon: RiBillLine, redirect: "/events" },
+  { menu: "Profil", icon: FaRegUserCircle, redirect: "/liked" },
+];
