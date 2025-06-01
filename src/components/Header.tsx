@@ -1,4 +1,5 @@
 "use client";
+import { CiLogin } from "react-icons/ci";
 
 import {
   decrypt,
@@ -14,7 +15,7 @@ import { IoMdMenu } from "react-icons/io";
 
 export default function Header() {
   const setAuth = useSetMe();
-  const { name } = useGetMe();
+  const { name, role } = useGetMe();
   const setSidebar = useSetSidebar();
   const { isOpen } = useGetSidebar();
   const [isOpenSidebar, setIsOpenSidebar] = useState(isOpen);
@@ -32,7 +33,7 @@ export default function Header() {
       <div className="flex items-center cursor-pointer">
         <IoMdMenu
           className="text-2xl mr-[1.5rem] md:hidden"
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation();
             setSidebar.setSidebar(!isOpenSidebar);
             setIsOpenSidebar(!isOpenSidebar);
@@ -43,14 +44,30 @@ export default function Header() {
           alt={"logo"}
           width={100}
           height={100}
+          priority={true}
           className="w-[6rem] rounded-full pointer-events-none select-none"
           onClick={() => window.location.replace("/")}
         />
       </div>
-      <div className="flex gap-3 items-center">
-        <p className="md:block hidden">{name}</p>
-        <div className="p-3 rounded-full bg-gradient-to-br from-blue-600 to-blue-300 text-white font-semibold">
-          <FaRegUser />
+      <div className="flex items-center gap-5">
+        {role === "guest" && (
+          <button
+            className="p-2 px-3 flex gap-2 items-center justify-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 ease-in-out cursor-pointer"
+            onClick={() => {
+              window.location.replace("/login");
+            }}
+          >
+            <CiLogin />
+            Login
+          </button>
+        )}
+        <div>
+          <div className="flex gap-3 items-center">
+            <p className="md:block hidden">{name}</p>
+            <div className="p-3 rounded-full bg-gradient-to-br from-blue-600 to-blue-300 text-white font-semibold">
+              <FaRegUser />
+            </div>
+          </div>
         </div>
       </div>
     </header>
