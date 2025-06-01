@@ -50,7 +50,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`flex fixed top-[4rem] md:top-0 flex-col items-center justify-between md:w-[20%] w-[15rem] gap-2 bg-white p-3 h-[calc(100vh-4rem)] transform transition-transform duration-300 ease-in-out ${
+      className={`flex fixed z-10 top-[4rem] md:top-0 flex-col items-center justify-between md:w-[20%] w-[15rem] gap-2 bg-white p-3 h-[calc(100vh-4rem)] transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0 md:relative `}
       ref={ref}
@@ -100,7 +100,7 @@ export default function Sidebar() {
 
 const menuItems = [
   { menu: "Menu", icon: IoFastFood, redirect: "/" },
-  { menu: "Keranjang", icon: IoCart, redirect: "/trash" },
-  { menu: "Histori", icon: RiBillLine, redirect: "/events" },
-  { menu: "Profil", icon: FaRegUserCircle, redirect: "/liked" },
+  { menu: "Keranjang", icon: IoCart, redirect: "/cart" },
+  { menu: "Histori", icon: RiBillLine, redirect: "/history" },
+  { menu: "Profil", icon: FaRegUserCircle, redirect: "/profile" },
 ];
