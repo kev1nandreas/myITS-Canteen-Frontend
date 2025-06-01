@@ -27,6 +27,28 @@ export interface LoginResponse {
   user: UserResponse;
 }
 
+export interface CanteenResponse {
+  k_id: string;
+  k_name: string;
+  k_address: string;
+}
+
+export interface VendorResponse {
+  v_id: string;
+  v_name: string;
+  v_join_date: string;
+  k_id: string;
+  c_id: string;
+}
+
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
   return data as LoginResponse | undefined;
+}
+
+export function typecastCanteenResponse(data: any): CanteenResponse[] | undefined {
+  return data as CanteenResponse[] | undefined;
+}
+
+export function typecastVendorResponse(data: any): VendorResponse[] | undefined {
+  return data as VendorResponse[] | undefined;
 }
