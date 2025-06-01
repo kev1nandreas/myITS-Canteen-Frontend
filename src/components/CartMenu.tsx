@@ -1,0 +1,81 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { formatPrice } from "@/lib/utils";
+import Image from "next/image";
+import Counter from "./ui/Counter";
+import { useState } from "react";
+
+interface CartMenuProps {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  calculateTotalPrice: () => void;
+}
+
+export default function CartMenu({
+  id,
+  name,
+  price,
+  quantity,
+  image,
+  calculateTotalPrice,
+}: CartMenuProps) {
+  const [count, setCount] = useState(quantity);
+
+  const handleDecrement = () => {
+    const cart = JSON.parse(window.localStorage.getItem("cart") || "[]");
+    const existingItem = cart.find((item: any) => item.id === id);
+
+    if (existingItem && existingItem.quantity > 1) {
+      existingItem.quantity -= 1;
+      window.localStorage.setItem("cart", JSON.stringify(cart));
+    } else if (existingItem && existingItem.quantity === 1) {
+      const updatedCart = cart.filter((item: any) => item.id !== id);
+      window.localStorage.setItem("cart", JSON.stringify(updatedCart));
+      window.location.reload();
+    }
+    setCount(existingItem ? existingItem.quantity : 0);
+    calculateTotalPrice();
+  };
+
+  const handleIncrement = () => {
+    const cart = JSON.parse(window.localStorage.getItem("cart") || "[]");
+    const existingItem = cart.find((item: any) => item.id === id);
+    existingItem.quantity += 1;
+    setCount(existingItem.quantity);
+    window.localStorage.setItem("cart", JSON.stringify(cart));
+    calculateTotalPrice();
+  };
+
+  return (
+    <div className="flex items-center gap-5 md:gap-10 px-4 p-2 border-b border-gray-200 rounded-xl">
+      <div className="flex items-center justify-center w-[5rem] h-[5rem] rounded-lg bg-gray-100 overflow-hidden">
+        <Image
+          src={image || "/Menu/blank-bg.png"}
+          alt={"Image of " + name}
+          width={200}
+          height={200}
+        />
+      </div>
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-fit">
+        <p className="md:w-[15rem] w-[10rem] font-semibold md:text-lg">
+          {name}
+        </p>
+        <div className="flex items-center w-fit md:items-center gap-10">
+          <div className="w-fit md:flex md:items-center gap-3">
+            <p className="md:w-[10rem] w-[5rem] text-sm md:text-base">{formatPrice(price)}</p>
+            <p className="md:w-[10rem] w-[6rem]">{formatPrice(price * count)}</p>
+          </div>
+          <div className="w-fit flex items-center">
+            <Counter
+              count={count}
+              onDecrement={handleDecrement}
+              onIncrement={handleIncrement}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

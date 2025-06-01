@@ -65,3 +65,14 @@ export const decrypt = (ciphertext: string): string => {
   );
   return bytes.toString(CryptoJS.enc.Utf8);
 };
+
+export const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+    .format(price)
+    .replace("IDR", "Rp");
+};

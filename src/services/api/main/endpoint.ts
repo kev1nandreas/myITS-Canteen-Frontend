@@ -5,4 +5,8 @@ export const MAIN_ENDPOINT = {
 		Logout: "/logout",
 		CurrentUser: "/me",
 	},
+	Canteen: {
+		GetCanteens: "/canteens",
+		GetVendor: "canteens/$idCanteen/vendors",
+	}
 };
