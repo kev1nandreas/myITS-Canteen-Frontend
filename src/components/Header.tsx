@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { IoMdMenu } from "react-icons/io";
 
+let isInitialized = false;
+
 export default function Header() {
   const setAuth = useSetMe();
   const { name, role } = useGetMe();
@@ -21,11 +23,13 @@ export default function Header() {
   const [isOpenSidebar, setIsOpenSidebar] = useState(isOpen);
 
   useEffect(() => {
+    if (isInitialized) return;
     const encryptedName = window.localStorage.getItem("name");
     const encryptedRole = window.localStorage.getItem("roles");
     const name = encryptedName ? decrypt(encryptedName) : "Guest";
     const role = encryptedRole ? decrypt(encryptedRole) : "guest";
     setAuth.setMe(role, name);
+    isInitialized = true;
   }, [setAuth]);
 
   return (
