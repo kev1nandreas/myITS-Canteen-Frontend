@@ -14,15 +14,16 @@ export async function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
-  const hasToken = request.cookies.get(ENV.TOKEN_KEY)?.value;
+  const hasToken = request.cookies.has(ENV.TOKEN_KEY) && 
+                   request.cookies.get(ENV.TOKEN_KEY)?.value !== '';
 
   if (pathname === PATH.AUTH.LOGIN && hasToken) {
     return NextResponse.redirect(new URL(PATH.HOME, request.url));
   }
 
-  return NextResponse.next();
+  // return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/auth/:path*', '/guard/:path*'],
+  matcher: ['/', '/login', '/auth/:path*', '/guard/:path*'],
 };
