@@ -49,7 +49,7 @@ export default function CartMenu({
   };
 
   return (
-    <div className="flex items-center gap-5 md:gap-10 px-4 p-2 border-b border-gray-200 rounded-xl">
+    <div className="flex items-center gap-5 md:gap-10 px-4 p-2 border-b border-gray-200">
       <div className="flex items-center justify-center w-[5rem] h-[5rem] rounded-lg bg-gray-100 overflow-hidden">
         <Image
           src={image || "/Menu/blank-bg.png"}
@@ -58,14 +58,14 @@ export default function CartMenu({
           height={200}
         />
       </div>
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-fit">
-        <p className="md:w-[15rem] w-[10rem] font-semibold md:text-lg">
+      <div className="flex flex-col items-start gap-3 w-fit">
+        <p className="w-[10rem] font-semibold md:text-lg">
           {name}
         </p>
-        <div className="flex items-center w-fit md:items-center gap-10">
-          <div className="w-fit md:flex md:items-center gap-3">
-            <p className="md:w-[10rem] w-[5rem] text-sm md:text-base">{formatPrice(price)}</p>
-            <p className="md:w-[10rem] w-[6rem]">{formatPrice(price * count)}</p>
+        <div className="flex items-center w-fit gap-3">
+          <div className="w-fit gap-3">
+            <p className=" w-[5rem] text-sm">{formatPrice(price)}</p>
+            <p className=" w-[6rem]">{formatPrice(price * count)}</p>
           </div>
           <div className="w-fit flex items-center">
             <Counter
