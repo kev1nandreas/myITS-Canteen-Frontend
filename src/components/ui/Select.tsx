@@ -16,6 +16,7 @@ interface SelectProps {
   control?: Control<any>;
   required?: boolean;
   onSelect?: (value: string) => void;
+  classname?: string;
 }
 
 const SelectDropdown = ({
@@ -25,6 +26,7 @@ const SelectDropdown = ({
   control,
   required,
   onSelect,
+  classname
 }: SelectProps) => {
   if (control) {
     return (
@@ -41,7 +43,7 @@ const SelectDropdown = ({
             }}
           >
             <Select.Trigger
-              className="inline-flex h-[3rem] w-[22rem] items-center justify-between gap-[3rem] rounded-xl cursor-pointer bg-white px-[15px] border border-gray-200 leading-none outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-gray-300"
+              className={`inline-flex h-[3rem] ${classname} items-center justify-between gap-[3rem] rounded-xl cursor-pointer bg-white px-[15px] border border-gray-200 leading-none outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-gray-300`}
               aria-label={placeholder}
             >
               <Select.Value placeholder={placeholder} />
@@ -50,7 +52,7 @@ const SelectDropdown = ({
               </Select.Icon>
             </Select.Trigger>
             <Select.Portal>
-              <Select.Content className="w-[22rem] relative left-5 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+              <Select.Content className={`${classname} relative left-5 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]`}>
                 <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-black/100">
                   <ChevronUpIcon />
                 </Select.ScrollUpButton>
