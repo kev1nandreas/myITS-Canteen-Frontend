@@ -25,7 +25,7 @@ const CheckBox = ({
     defaultValue={defaultValue}
     rules={{ required }}
     render={({ field: { value = [], onChange } }) => (
-      <div className="flex flex-wrap w-full gap-4">
+      <div className="flex flex-wrap w-full gap-4 justify-evenly">
         {options.map((option, index) => (
           <div key={index} className="flex items-center">
             <RadixCheckbox.Root
@@ -36,7 +36,7 @@ const CheckBox = ({
                   : value.filter((v: string) => v !== option.value);
                 onChange(newValue);
               }}
-              className="flex size-[25px] appearance-none items-center justify-center rounded bg-white outline-none border border-slate-300 hover:bg-slate-100"
+              className="flex size-[25px] appearance-none items-center justify-center rounded bg-white outline-none border border-slate-300 hover:bg-slate-100 data-[state=checked]:bg-blue-200"
               id={`checkbox-${option.value}`}
             >
               <RadixCheckbox.Indicator className="text-violet11">

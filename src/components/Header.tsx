@@ -1,6 +1,6 @@
 "use client";
-import { CiLogin } from "react-icons/ci";
 
+import { CiLogin } from "react-icons/ci";
 import {
   decrypt,
   useGetMe,
@@ -67,7 +67,13 @@ export default function Header() {
         )}
         <div>
           <div className="flex gap-3 items-center">
-            <p className="md:block hidden">{name}</p>
+            <div className="hidden md:block">
+              {name ? (
+                <p>{name}</p>
+              ) : (
+                <div className="h-5 w-[100px] bg-gray-200 rounded-lg animate-pulse" />
+              )}
+            </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-blue-600 to-blue-300 text-white font-semibold">
               <FaRegUser />
             </div>

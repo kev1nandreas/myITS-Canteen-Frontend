@@ -34,7 +34,7 @@ const SelectDropdown = ({
         name={name}
         control={control}
         rules={{ required }}
-        render={({ field }) => (
+        render={({ field, fieldState: { error } }) => (
           <Select.Root
             value={field.value}
             onValueChange={(value) => {
@@ -42,38 +42,43 @@ const SelectDropdown = ({
               if (onSelect) onSelect(value);
             }}
           >
-            <Select.Trigger
-              className={`inline-flex h-[3rem] ${classname} items-center justify-between gap-[3rem] rounded-xl cursor-pointer bg-white px-[15px] border border-gray-200 leading-none outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-gray-300`}
-              aria-label={placeholder}
-            >
-              <Select.Value placeholder={placeholder} />
-              <Select.Icon className="text-violet11">
-                <ChevronDownIcon />
-              </Select.Icon>
-            </Select.Trigger>
-            <Select.Portal>
-              <Select.Content className={`${classname} relative left-5 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]`}>
-                <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-black/100">
-                  <ChevronUpIcon />
-                </Select.ScrollUpButton>
-                <Select.Viewport className="p-[10px]">
-                  <Select.Group>
-                    {datas.map((data, index) => (
-                      <SelectItem
-                        key={index}
-                        className="hover:bg-blue-100 cursor-pointer"
-                        value={data.value}
-                      >
-                        {data.label}
-                      </SelectItem>
-                    ))}
-                  </Select.Group>
-                </Select.Viewport>
-                <Select.ScrollDownButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-violet11">
+            <>
+              <Select.Trigger
+                className={`inline-flex h-[3rem] ${classname} items-center justify-between gap-[3rem] rounded-xl cursor-pointer bg-white px-[15px] border border-gray-200 leading-none outline-none hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-gray-300`}
+                aria-label={placeholder}
+              >
+                <Select.Value placeholder={placeholder} />
+                <Select.Icon className="text-violet11">
                   <ChevronDownIcon />
-                </Select.ScrollDownButton>
-              </Select.Content>
-            </Select.Portal>
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content className={`${classname} relative left-5 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]`}>
+                  <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-black/100">
+                    <ChevronUpIcon />
+                  </Select.ScrollUpButton>
+                  <Select.Viewport className="p-[10px]">
+                    <Select.Group>
+                      {datas.map((data, index) => (
+                        <SelectItem
+                          key={index}
+                          className="hover:bg-blue-100 cursor-pointer"
+                          value={data.value}
+                        >
+                          {data.label}
+                        </SelectItem>
+                      ))}
+                    </Select.Group>
+                  </Select.Viewport>
+                  <Select.ScrollDownButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-violet11">
+                    <ChevronDownIcon />
+                  </Select.ScrollDownButton>
+                </Select.Content>
+              </Select.Portal>
+              {error && (
+                <span className="text-red-500 text-sm">Bagian ini wajib diisi</span>
+              )}
+            </>
           </Select.Root>
         )}
       />

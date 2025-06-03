@@ -6,6 +6,8 @@ import { useState } from "react";
 
 interface CartMenuProps {
   id: string;
+  index: number;
+  total: number;
   name: string;
   price: number;
   quantity: number;
@@ -15,6 +17,8 @@ interface CartMenuProps {
 
 export default function CartMenu({
   id,
+  index,
+  total,
   name,
   price,
   quantity,
@@ -49,7 +53,11 @@ export default function CartMenu({
   };
 
   return (
-    <div className="flex items-center gap-5 md:gap-10 px-4 p-2 border-b border-gray-200">
+    <div
+      className={`flex items-center gap-5 md:gap-10 p-4 border-gray-200 ${
+        index === total - 1 ? "" : "border-b"
+      }`}
+    >
       <div className="flex items-center justify-center w-[5rem] h-[5rem] rounded-lg bg-gray-100 overflow-hidden">
         <Image
           src={image || "/Menu/blank-bg.png"}
@@ -58,11 +66,11 @@ export default function CartMenu({
           height={200}
         />
       </div>
-      <div className="flex flex-col items-start gap-3 w-fit">
+      <div className="flex flex-col items-start gap-3">
         <p className="w-[10rem] font-semibold md:text-lg">
           {name}
         </p>
-        <div className="flex items-center w-fit gap-3">
+        <div className="flex items-center w-fit gap-3 justify-between md:w-[17rem]">
           <div className="w-fit gap-3">
             <p className=" w-[5rem] text-sm">{formatPrice(price)}</p>
             <p className=" w-[6rem]">{formatPrice(price * count)}</p>
