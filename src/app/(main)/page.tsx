@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/ui/LoadingUI";
 import ChooseCanteen from "@/containers/ChooseCanteen";
 import MenuShowUp from "@/containers/MenuShowUp";
 import { useEffect, useState } from "react";
@@ -26,16 +27,12 @@ export default function Page() {
 
   return (
     <div className="flex justify-center w-full md:w-[80%] h-[calc(100vh-4rem)] overflow-auto">
-      {isLoading && (
-        <div className="flex items-center justify-center">
-          <p>Loading...</p>
-        </div>
-      )}
+      {isLoading && <Loading />}
 
       {!canteen && !isLoading ? (
         <ChooseCanteen />
       ) : canteen ? (
-        <MenuShowUp canteenName={canteen.name}  />
+        <MenuShowUp canteenName={canteen.name} />
       ) : null}
     </div>
   );

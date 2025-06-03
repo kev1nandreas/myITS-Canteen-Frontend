@@ -4,6 +4,7 @@
 import CartMenu from "@/components/CartMenu";
 import Button from "@/components/ui/Button";
 import CheckBox from "@/components/ui/Checkbox";
+import Loading from "@/components/ui/LoadingUI";
 import RadioButton from "@/components/ui/Radio-Button";
 import SelectDropdown from "@/components/ui/Select";
 import { formatPrice } from "@/lib/utils";
@@ -66,11 +67,7 @@ export default function Cart() {
   };
 
   if (isLoading) {
-    return (
-      <div className="md:w-[80%] flex items-center justify-center w-full h-[calc(100vh-4rem)]">
-        <p>Loading...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   const handleSubmitForm = (data: any) => {
@@ -87,20 +84,22 @@ export default function Cart() {
       <h1 className="text-3xl font-bold mb-4">Pesanan Anda</h1>
       {cart.length === 0 ? (
         <div className="flex items-center justify-center w-full">
-          <p className="text-lg">Keranjang Anda kosong</p>
+          <p className="text-lg">Anda belum memilih menu</p>
         </div>
       ) : (
         <FormProvider {...methods}>
           <form
-            className="flex justify-between mb-4 gap-[2rem] flex-wrap"
+            className="flex justify-between my-4 gap-[2rem] flex-wrap"
             onSubmit={methods.handleSubmit(handleSubmitForm)}
           >
             <div className="flex flex-col md:flex-1/3 w-[calc(100vw-4rem)] gap-4">
-              <h1 className="mb-4">Rincian Pesanan</h1>
-              <div className="flex flex-col gap-4 bg-white p-4 border border-gray-200 rounded-lg">
-                {cart.map((item) => (
+              <h1 className="font-semibold text-xl">Rincian Pesanan</h1>
+              <div className="flex flex-col bg-white p-4 border border-gray-200 rounded-lg">
+                {cart.map((item, index) => (
                   <CartMenu
                     key={item.id}
+                    index={index}
+                    total={cart.length}
                     id={item.id.toString()}
                     name={item.name}
                     quantity={item.quantity}
@@ -112,10 +111,12 @@ export default function Cart() {
               </div>
               <div className="flex flex-col gap-4 mt-6">
                 {/* Payment */}
-                <h1>Rincian Pembayaran</h1>
-                <div className="flex gap-4 p-4 border rounded-lg justify-between bg-white border-gray-200">
+                <h1 className="text-xl font-semibold">Rincian Pembayaran</h1>
+                <div className="flex gap-4 p-4 border rounded-lg justify-between items-center bg-white border-gray-200">
                   <p>Total Harga</p>
-                  <p>{formatPrice(totalPrice)}</p>
+                  <p className="text-lg font-semibold">
+                    {formatPrice(totalPrice)}
+                  </p>
                 </div>
                 <div className="flex flex-col gap-4 p-4 border rounded-lg justify-between bg-white border-gray-200">
                   <p>Pilih Metode Pembayaran</p>
@@ -131,7 +132,7 @@ export default function Cart() {
             </div>
 
             <div className="flex flex-col md:flex-1/3 gap-4 w-[calc(100vw-4rem)]">
-              <h1>Rincian Reservasi</h1>
+              <h1 className="text-xl font-semibold">Rincian Reservasi</h1>
               <div className="flex flex-col gap-8 p-4 border rounded-lg justify-between bg-white border-gray-200">
                 <div className="flex flex-col gap-4">
                   <p>Pilih Jenis Transaksi</p>
