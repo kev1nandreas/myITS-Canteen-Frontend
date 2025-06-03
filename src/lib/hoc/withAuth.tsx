@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { JSX, useEffect, useState } from "react";
+import { ComponentType, useEffect, useState } from "react";
 import { decrypt } from "../utils";
 import Loading from "@/components/ui/LoadingUI";
 
@@ -10,11 +10,11 @@ interface AuthProps {
   allowedRoles?: string[];
 }
 
-export function withAuth<T extends JSX.IntrinsicAttributes>(
-  Component: React.ComponentType<T>,
+export function withAuth<P extends object>(
+  Component: ComponentType<P>,
   authProps: AuthProps = {}
 ) {
-  return function WithAuth(props: T) {
+  return function WithAuth(props: P) {
     const router = useRouter();
     const [role, setRole] = useState<string | null>(null);
     const [isChecking, setIsChecking] = useState(true);
