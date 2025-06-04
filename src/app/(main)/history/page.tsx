@@ -3,13 +3,14 @@
 import HistoryCard from "@/components/HistoryCard";
 import Tabs from "@/components/ui/Tabs";
 import { withAuth } from "@/lib/hoc/withAuth";
+import { PATH } from "@/shared/path";
 import { useState } from "react";
 
 function History() {
   const [activeTab, setActiveTab] = useState("validasi");
 
   return (
-    <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto">
+    <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
       <h1 className="text-3xl font-bold">Histori Transaksi</h1>
       <div className="flex items-center justify-start mt-4 mb-6 border-b border-gray-200 gap-4">
         {FilterTabs.map((tab) => (
@@ -46,7 +47,7 @@ function History() {
 }
 
 export default withAuth(History, {
-  redirectTo: "/",
+  redirectTo: PATH.AUTH.LOGIN,
   allowedRoles: ["user"],
 });
 

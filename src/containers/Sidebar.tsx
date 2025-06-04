@@ -50,9 +50,9 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`flex absolute z-20 top-[4rem] md:top-0 flex-col items-center justify-between md:w-[20%] w-[15rem] gap-2 bg-white p-3 h-[calc(100vh-4rem)] transform transition-transform duration-300 ease-in-out ${
+      className={`flex md:sticky fixed z-20 top-[4rem] flex-col items-center justify-between md:w-[20%] w-[15rem] gap-2 bg-white p-3 h-[calc(100vh-4rem)] border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0 md:relative `}
+      } md:translate-x-0`}
       ref={ref}
     >
       <div className="w-full flex flex-col gap-2">

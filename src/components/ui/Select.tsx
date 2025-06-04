@@ -53,7 +53,7 @@ const SelectDropdown = ({
                 </Select.Icon>
               </Select.Trigger>
               <Select.Portal>
-                <Select.Content className={`${classname} relative left-5 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]`}>
+                <Select.Content className={`${classname} relative left-2 top-0 rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]`}>
                   <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-black/100">
                     <ChevronUpIcon />
                   </Select.ScrollUpButton>

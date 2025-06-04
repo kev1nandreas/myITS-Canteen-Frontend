@@ -33,7 +33,7 @@ export default function Header() {
   }, [setAuth]);
 
   return (
-    <header className="flex items-center h-[4rem] border-b-[1px] border-slate-300 bg-white justify-between px-[2rem]">
+    <header className="flex top-0 items-center h-[4rem] border-b-[1px] border-slate-300 bg-white justify-between px-[2rem]">
       <div className="flex items-center cursor-pointer">
         <IoMdMenu
           className="text-2xl mr-[1.5rem] md:hidden"
