@@ -52,3 +52,7 @@ export function typecastCanteenResponse(data: any): CanteenResponse[] | undefine
 export function typecastVendorResponse(data: any): VendorResponse[] | undefined {
   return data as VendorResponse[] | undefined;
 }
+
+export function typecastUserResponse(data: any): UserResponse | undefined {
+  return data as UserResponse | undefined;
+}

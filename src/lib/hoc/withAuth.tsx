@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ComponentType, useEffect, useState } from "react";
-import { decrypt } from "../utils";
+import { ComponentType } from "react";
+import { useFetchProfile } from "@/services/api/hook/useAuth";
 import Loading from "@/components/ui/LoadingUI";
+import { typecastUserResponse } from "@/types/response";
+import { PATH } from "@/shared/path";
 
 interface AuthProps {
   redirectTo?: string;
@@ -16,34 +18,27 @@ export function withAuth<P extends object>(
 ) {
   return function WithAuth(props: P) {
     const router = useRouter();
-    const [role, setRole] = useState<string | null>(null);
-    const [isChecking, setIsChecking] = useState(true);
 
-    useEffect(() => {
-      const encryptedRole = window.localStorage.getItem("roles");
-      const decryptedRole = encryptedRole ? decrypt(encryptedRole) : null;
+    const { data, isLoading } = useFetchProfile();
+    const userData = typecastUserResponse(data?.data);
 
-      setRole(decryptedRole);
-      if (
-        authProps.allowedRoles &&
-        !authProps.allowedRoles.includes(decryptedRole || "")
-      ) {
-        router.replace(authProps.redirectTo || "/login");
-      }
-      setIsChecking(false);
-    }, [router]);
-
-    if (isChecking) {
+    if (isLoading) {
       return <Loading />;
     }
 
-    if (
-      role &&
-      (!authProps.allowedRoles || authProps.allowedRoles.includes(role))
-    ) {
-      return <Component {...props} />;
+    if (!userData) {
+      router.push(PATH.AUTH.LOGIN);
+      return null;
     }
 
-    return null;
+    if (
+      authProps.allowedRoles &&
+      !authProps.allowedRoles.includes(userData.role)
+    ) {
+      router.push(PATH.NOT_FOUND);
+      return null;
+    }
+
+    return <Component {...props} user={userData} />;
   };
 }
