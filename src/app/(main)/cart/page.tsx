@@ -7,6 +7,7 @@ import CheckBox from "@/components/ui/Checkbox";
 import Loading from "@/components/ui/LoadingUI";
 import RadioButton from "@/components/ui/Radio-Button";
 import SelectDropdown from "@/components/ui/Select";
+import Switch from "@/components/ui/Switch";
 import { formatPrice } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -24,6 +25,8 @@ export default function Cart() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isDineIn, setIsDineIn] = useState(false);
+  const [redeem, setRedeem] = useState(false);
+  const [point] = useState(10000);
 
   const methods = useForm({
     mode: "all",
@@ -46,8 +49,19 @@ export default function Cart() {
     setIsLoading(false);
   }, []);
 
+  const countDiscount = () => {
+    if (point > totalPrice) {
+      return totalPrice;
+    }
+    return point;
+  };
+
   const handleTransactionTypeChange = (value: string) => {
-    setIsDineIn(value === "dine_in");
+    setIsDineIn(value === "true");
+  };
+
+  const handleReedeemChange = (value: boolean) => {
+    setRedeem(value);
   };
 
   const calculateTotalPrice = () => {
@@ -74,7 +88,10 @@ export default function Cart() {
     const formData = {
       ...data,
       totalPrice: totalPrice,
-      cartItems: cart,
+      cartItems: cart.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+      })),
     };
     console.log("Form submitted with data:", formData);
   };
@@ -112,16 +129,35 @@ export default function Cart() {
               <div className="flex flex-col gap-4 mt-6">
                 {/* Payment */}
                 <h1 className="text-xl font-semibold">Rincian Pembayaran</h1>
-                <div className="flex gap-4 p-4 border rounded-lg justify-between items-center bg-white border-gray-200">
-                  <p>Total Harga</p>
-                  <p className="text-lg font-semibold">
-                    {formatPrice(totalPrice)}
-                  </p>
+                <div className="flex flex-col gap-1 p-4 border rounded-lg bg-white border-gray-200">
+                  <Switch
+                    id="discount"
+                    label={`Gunakan ${formatPrice(countDiscount())} Poin`}
+                    name="discount"
+                    control={methods.control}
+                    valueChange={handleReedeemChange}
+                  />
+                  <div className="flex justify-between items-center mt-4 opacity-60">
+                    <p>Total Belanja</p>
+                    <p>{formatPrice(totalPrice)}</p>
+                  </div>
+                  <div className="flex justify-between items-center opacity-60">
+                    <p>Diskon</p>
+                    <p>{redeem ? formatPrice(countDiscount()) : formatPrice(0)}</p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p>Total Pembayaran</p>
+                    <p className="text-lg font-semibold">
+                      {redeem
+                        ? formatPrice(totalPrice - countDiscount())
+                        : formatPrice(totalPrice)}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-4 p-4 border rounded-lg justify-between bg-white border-gray-200">
                   <p>Pilih Metode Pembayaran</p>
                   <SelectDropdown
-                    name={"jenis-pembayaran"}
+                    name={"payment"}
                     placeholder={"Jenis pembayaran"}
                     datas={transMethods}
                     control={methods.control}
@@ -137,10 +173,10 @@ export default function Cart() {
                 <div className="flex flex-col gap-4">
                   <p>Pilih Jenis Transaksi</p>
                   <RadioButton
-                    name="transactionType"
+                    name="is_dine"
                     data={[
-                      { label: "Dine In", value: "dine_in" },
-                      { label: "Take Away", value: "take_away" },
+                      { label: "Dine In", value: "true" },
+                      { label: "Take Away", value: "false" },
                     ]}
                     control={methods.control}
                     onSelect={handleTransactionTypeChange}
@@ -153,7 +189,7 @@ export default function Cart() {
                       <div className="flex flex-col flex-1/2 gap-4">
                         <p>Pilih Jam Datang</p>
                         <SelectDropdown
-                          name={"jam-datang"}
+                          name={"time-in"}
                           placeholder={"Jam Datang"}
                           datas={[
                             { label: "12:00", value: "12:00" },
@@ -168,7 +204,7 @@ export default function Cart() {
                       <div className="flex flex-col flex-1/2 gap-4">
                         <p>Pilih Jam Pergi</p>
                         <SelectDropdown
-                          name={"jam-pergi"}
+                          name={"time-out"}
                           placeholder={"Jam Pergi"}
                           datas={[
                             { label: "12:00", value: "12:00" },
@@ -210,9 +246,8 @@ export default function Cart() {
 
 const transMethods = [
   { label: "Cash", value: "cash" },
-  { label: "Credit Card", value: "credit_card" },
-  { label: "Debit Card", value: "debit_card" },
-  { label: "E-Wallet", value: "e_wallet" },
+  { label: "Card", value: "card" },
+  { label: "Qris", value: "qris" },
 ];
 
 const chair = [
