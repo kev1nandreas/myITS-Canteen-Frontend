@@ -21,9 +21,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(PATH.HOME, request.url));
   }
 
+  if (pathname === "/admin" && hasToken) {
+    return NextResponse.redirect(new URL(PATH.ADMIN, request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/login', '/auth/:path*', '/guard/:path*'],
+  matcher: ['/', '/login', '/auth/:path*', '/guard/:path*', '/admin/:path*'],
 };

@@ -3,7 +3,7 @@
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Typography } from "@/components/ui/Typography";
-import { parseFormData } from "@/lib/utils";
+import { decrypt, parseFormData } from "@/lib/utils";
 import { useLogin } from "@/services/api/hook/useAuth";
 import { LoginProps } from "@/types/request";
 import Image from "next/image";
@@ -19,7 +19,11 @@ export default function Login() {
   const mutation = useLogin({
     onSuccess: () => {
       toast.success("Login Success");
-      router.push("/");
+      if (decrypt(localStorage.getItem("roles") || "") === "admin") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
     },
     onError: (error) => {
       toast.error(error.message);
