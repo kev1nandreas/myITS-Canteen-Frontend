@@ -65,7 +65,7 @@ export default function Sidebar() {
         {/* Menu */}
         <div className="flex flex-col w-full gap-1 pt-2">
           {role === "admin" && (
-            <p className="text-sm opacity-50 my-2">Manajemen Kedai</p>
+            <p className="text-sm opacity-50 my-2 mx-5">Manajemen Kedai</p>
           )}
           {role === "admin" &&
             adminMenuItems.map((item, index) => (
@@ -77,7 +77,7 @@ export default function Sidebar() {
               />
             ))}
           {role === "admin" && (
-            <p className="text-sm opacity-50 my-2">Sebagai Pembeli</p>
+            <p className="text-sm opacity-50 my-2 mx-5">Sebagai Pembeli</p>
           )}
           {(role === "user" || role === "admin") &&
             menuItems.map((item, index) => (
