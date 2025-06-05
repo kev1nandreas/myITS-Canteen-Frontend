@@ -45,3 +45,27 @@ export const useFetchVendorbyCanteen = (
     queryKey: ["fetch.vendor.by.canteen", canteenId],
   }) as any;
 };
+
+export const useFetchChairbyCanteen = (
+  canteenId: string,
+  body: any,
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await get(
+        MAIN_ENDPOINT.Canteen.GetChair.replace("$idCanteen", canteenId),
+        body
+      );
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["fetch.chair.by.canteen", canteenId],
+  }) as any;
+};

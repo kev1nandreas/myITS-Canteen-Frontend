@@ -8,5 +8,9 @@ export const MAIN_ENDPOINT = {
 	Canteen: {
 		GetCanteens: "/canteens",
 		GetVendor: "canteens/$idCanteen/vendors",
-	}
+		GetChair: "canteens/$idCanteen/available-chairs",
+	},
+	Transaction: {
+		CreateTransaction: "transactions",
+	},
 };

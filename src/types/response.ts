@@ -41,6 +41,11 @@ export interface VendorResponse {
   c_id: string;
 }
 
+export interface ChairResponse {
+  ch_id: string;
+  chair_name: string;
+}
+
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
   return data as LoginResponse | undefined;
 }
@@ -55,4 +60,8 @@ export function typecastVendorResponse(data: any): VendorResponse[] | undefined 
 
 export function typecastUserResponse(data: any): UserResponse | undefined {
   return data as UserResponse | undefined;
+}
+
+export function typecastChairResponse(data: any): ChairResponse[] | undefined {
+  return data as ChairResponse[] | undefined;
 }

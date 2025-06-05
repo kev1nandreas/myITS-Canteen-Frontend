@@ -11,6 +11,8 @@ export default function Input({
   placeholder,
   validation,
   className,
+  min,
+  max,
 }: {
   id: string;
   label: string;
@@ -18,6 +20,8 @@ export default function Input({
   placeholder?: string;
   validation?: RegisterOptions;
   className?: string;
+  min?: string;
+  max?: string;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const {
@@ -35,6 +39,8 @@ export default function Input({
           id={id}
           type={showPassword ? "text" : type}
           placeholder={placeholder}
+          min={min}
+          max={max}
           {...register(id, validation)}
           className={`block w-full px-3 py-2 border rounded-md focus:outline-none ${
             error

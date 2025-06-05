@@ -4,11 +4,14 @@
 import CartMenu from "@/components/CartMenu";
 import Button from "@/components/ui/Button";
 import CheckBox from "@/components/ui/Checkbox";
+import Input from "@/components/ui/Input";
 import Loading from "@/components/ui/LoadingUI";
 import RadioButton from "@/components/ui/Radio-Button";
 import SelectDropdown from "@/components/ui/Select";
 import Switch from "@/components/ui/Switch";
 import { formatPrice } from "@/lib/utils";
+import { useFetchChairbyCanteen } from "@/services/api/hook/useCanteen";
+import { typecastChairResponse } from "@/types/response";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -27,11 +30,53 @@ export default function Cart() {
   const [isDineIn, setIsDineIn] = useState(false);
   const [redeem, setRedeem] = useState(false);
   const [point] = useState(10000);
+  const [chair, setChair] = useState<{ label: string; value: string }[]>([]);
+  const [canteenId, setCanteenId] = useState<string>();
 
   const methods = useForm({
     mode: "all",
     reValidateMode: "onSubmit",
   });
+
+  const timeIn = methods.watch("time_in");
+  const timeOut = methods.watch("time_out");
+  const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    const canteen = JSON.parse(window.localStorage.getItem("canteen") || "{}");
+    if (canteen && canteen.id) {
+      setCanteenId(canteen.id);
+    } else {
+      setCanteenId("1");
+    }
+  }, []);
+
+  const {
+    data: chairData,
+    isLoading: isChairLoading,
+    refetch: refetchChair,
+  } = useFetchChairbyCanteen(canteenId ?? "1", {
+    time_in: `${today} ${timeIn || "08:00"}:00`,
+    time_out: `${today} ${timeOut || "16:00"}:00`,
+  });
+
+  useEffect(() => {
+    if (!timeIn || !timeOut) return;
+    setTimeout(() => {
+      refetchChair();
+      console.log("Chairs available:");
+      if (chairData) {
+        const chairs =
+          typecastChairResponse(chairData.data)?.map((chair) => ({
+            label: chair.chair_name,
+            value: chair.ch_id,
+          })) || [];
+        setChair(chairs);
+      } else {
+        setChair([]);
+      }
+    }, 2000);
+  }, [timeIn, timeOut, isDineIn, chairData, refetchChair]);
 
   useEffect(() => {
     const storedCart = window.localStorage.getItem("cart");
@@ -87,7 +132,11 @@ export default function Cart() {
   const handleSubmitForm = (data: any) => {
     const formData = {
       ...data,
+      is_dine: data.is_dine === "true",
       totalPrice: totalPrice,
+      discount: redeem ? countDiscount() : 0,
+      time_in: `${today} ${data["time_in"]}:00`,
+      time_out: `${today} ${data["time_out"]}:00`,
       cartItems: cart.map((item) => ({
         id: item.id,
         quantity: item.quantity,
@@ -143,7 +192,9 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between items-center opacity-60">
                     <p>Diskon</p>
-                    <p>{redeem ? formatPrice(countDiscount()) : formatPrice(0)}</p>
+                    <p>
+                      {redeem ? formatPrice(countDiscount()) : formatPrice(0)}
+                    </p>
                   </div>
                   <div className="flex justify-between items-center">
                     <p>Total Pembayaran</p>
@@ -187,45 +238,82 @@ export default function Cart() {
                   <>
                     <div className="flex gap-4 w-full">
                       <div className="flex flex-col flex-1/2 gap-4">
-                        <p>Pilih Jam Datang</p>
-                        <SelectDropdown
-                          name={"time-in"}
-                          placeholder={"Jam Datang"}
-                          datas={[
-                            { label: "12:00", value: "12:00" },
-                            { label: "13:00", value: "13:00" },
-                            { label: "14:00", value: "14:00" },
-                            { label: "15:00", value: "15:00" },
-                          ]}
-                          control={methods.control}
-                          required={true}
+                        <Input
+                          type="time"
+                          id={"time_in"}
+                          label={"Pilih Jam Datang"}
+                          min="08:00"
+                          max="16:00"
+                          className="gap-4"
+                          validation={
+                            timeIn && timeOut
+                              ? {
+                                  validate: (value: string) => {
+                                    const [hours, minutes] = value
+                                      .split(":")
+                                      .map(Number);
+                                    const [outHours, outMinutes] = timeOut
+                                      .split(":")
+                                      .map(Number);
+                                    if (
+                                      hours > outHours ||
+                                      (hours === outHours &&
+                                        minutes >= outMinutes)
+                                    ) {
+                                      return "Jam datang harus sebelum jam pergi";
+                                    }
+                                    return true;
+                                  },
+                                }
+                              : undefined
+                          }
                         />
                       </div>
                       <div className="flex flex-col flex-1/2 gap-4">
-                        <p>Pilih Jam Pergi</p>
-                        <SelectDropdown
-                          name={"time-out"}
-                          placeholder={"Jam Pergi"}
-                          datas={[
-                            { label: "12:00", value: "12:00" },
-                            { label: "13:00", value: "13:00" },
-                            { label: "14:00", value: "14:00" },
-                            { label: "15:00", value: "15:00" },
-                          ]}
-                          control={methods.control}
-                          required={true}
+                        <Input
+                          type="time"
+                          id={"time_out"}
+                          label={"Pilih Jam Pergi"}
+                          min="08:00"
+                          max="16:00"
+                          className="gap-4"
+                          validation={
+                            timeIn && timeOut
+                              ? {
+                                  validate: (value: string) => {
+                                    const [hours, minutes] = value
+                                      .split(":")
+                                      .map(Number);
+                                    const [inHours, inMinutes] = timeIn
+                                      .split(":")
+                                      .map(Number);
+                                    if (
+                                      hours < inHours ||
+                                      (hours === inHours &&
+                                        minutes <= inMinutes)
+                                    ) {
+                                      return "Jam pergi harus setelah jam datang";
+                                    }
+                                    return true;
+                                  },
+                                }
+                              : undefined
+                          }
                         />
                       </div>
                     </div>
                     <div className="flex flex-col gap-4">
                       <p>Pilih Kursi</p>
-                      <CheckBox
-                        name="kursi"
-                        control={methods.control}
-                        options={chair}
-                        defaultValue={[]}
-                        required={true}
-                      />
+                      {isChairLoading && <p>Memeriksa ketersediaan kursi</p>}
+                      {!isLoading && (
+                        <CheckBox
+                          name="kursi"
+                          control={methods.control}
+                          options={chair}
+                          defaultValue={[]}
+                          required={true}
+                        />
+                      )}
                     </div>
                   </>
                 )}
@@ -248,19 +336,4 @@ const transMethods = [
   { label: "Cash", value: "cash" },
   { label: "Card", value: "card" },
   { label: "Qris", value: "qris" },
-];
-
-const chair = [
-  { label: "A1", value: "A1" },
-  { label: "A2", value: "A2" },
-  { label: "A3", value: "A3" },
-  { label: "B1", value: "B1" },
-  { label: "B2", value: "B2" },
-  { label: "B3", value: "B3" },
-  { label: "C1", value: "C1" },
-  { label: "C2", value: "C2" },
-  { label: "C3", value: "C3" },
-  { label: "D1", value: "D1" },
-  { label: "D2", value: "D2" },
-  { label: "D3", value: "D3" },
 ];
