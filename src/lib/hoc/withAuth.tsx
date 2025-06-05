@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { ComponentType } from "react";
 import { useFetchProfile } from "@/services/api/hook/useAuth";
 import Loading from "@/components/ui/LoadingUI";
-import { typecastUserResponse } from "@/types/response";
+import { typecastUserResponse, UserResponse } from "@/types/response";
 import { PATH } from "@/shared/path";
 
 interface AuthProps {
@@ -12,11 +13,11 @@ interface AuthProps {
   allowedRoles?: string[];
 }
 
-export function withAuth<P extends object>(
-  Component: ComponentType<P>,
+export function withAuth<P extends Record<string, any> = object>(
+  Component: ComponentType<P & { user: UserResponse }>,
   authProps: AuthProps = {}
-) {
-  return function WithAuth(props: P) {
+): ComponentType<P> {
+  const WithAuthComponent = (props: P) => {
     const router = useRouter();
 
     const { data, isLoading } = useFetchProfile();
@@ -35,10 +36,14 @@ export function withAuth<P extends object>(
       authProps.allowedRoles &&
       !authProps.allowedRoles.includes(userData.role)
     ) {
-      router.push(PATH.NOT_FOUND);
+      router.push(authProps.redirectTo || PATH.AUTH.LOGIN);
       return null;
     }
 
-    return <Component {...props} user={userData} />;
+    return <Component {...(props as P & { user: UserResponse })} user={userData} />;
   };
+
+  WithAuthComponent.displayName = `withAuth(${Component.displayName || Component.name})`;
+
+  return WithAuthComponent;
 }

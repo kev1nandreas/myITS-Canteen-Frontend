@@ -48,7 +48,7 @@ function History() {
 
 export default withAuth(History, {
   redirectTo: PATH.AUTH.LOGIN,
-  allowedRoles: ["user"],
+  allowedRoles: ["user", "admin"],
 });
 
 const FilterTabs = [
