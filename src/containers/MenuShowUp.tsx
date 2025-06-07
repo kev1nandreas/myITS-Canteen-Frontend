@@ -2,8 +2,13 @@ import Category from "@/components/Category";
 import Menu from "@/components/Menu";
 import SelectDropdown from "@/components/ui/Select";
 import { Typography } from "@/components/ui/Typography";
-import { useFetchVendorbyCanteen } from "@/services/api/hook/useCanteen";
-import { typecastVendorResponse } from "@/types/response";
+import {
+  useFetchMenubyCanteen,
+  useFetchVendorbyCanteen,
+} from "@/services/api/hook/useCanteen";
+import { useFetchMenubyVendor } from "@/services/api/hook/useVendor";
+import { typecastMenuResponse, typecastVendorResponse } from "@/types/response";
+import { useState } from "react";
 import { MdEditLocationAlt } from "react-icons/md";
 import { PiBowlFood, PiHamburger } from "react-icons/pi";
 import { RiDrinksLine } from "react-icons/ri";
@@ -12,14 +17,12 @@ interface MenuShowUpProps {
   canteenName: string;
 }
 
-const handleValueChange = (value: string) => {
-  console.log("Selected value:", value);
-};
-
 export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
   const canteenId = JSON.parse(
     window.localStorage.getItem("canteen") || "{}"
   ).id;
+
+  // Fetch vendors by canteen
   const { data } = useFetchVendorbyCanteen(canteenId);
   const kedaisFetched =
     typecastVendorResponse(data?.data)?.map((vendor) => ({
@@ -27,6 +30,31 @@ export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
       value: vendor.v_id,
     })) || [];
   const kedais = [{ label: "Semua Kedai", value: "all" }, ...kedaisFetched];
+
+  // State for selected vendor
+  const [selectedVendor, setSelectedVendor] = useState<string>("all");
+
+  // Fetch menus by canteen
+  const { data: menusRaw, isLoading } = useFetchMenubyCanteen(canteenId);
+  const { data: vendorMenusRaw } = useFetchMenubyVendor(selectedVendor);
+
+  // Determine which menus to show
+  const menus =
+    selectedVendor === "all"
+      ? typecastMenuResponse(menusRaw?.data)
+      : typecastMenuResponse(vendorMenusRaw?.data);
+
+  const handleValueChange = (value: string) => {
+    setSelectedVendor(value);
+  };
+
+  const [isSelectedCat, setIsSelectedCat] = useState("");
+
+  // Filter menus by selected category
+  const filteredMenus = menus?.filter((menu) => {
+    if (isSelectedCat === "") return true;
+    return menu.m_category === isSelectedCat;
+  });
 
   return (
     <div className="flex flex-col items-center w-full h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto">
@@ -57,6 +85,12 @@ export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
                 key={index}
                 name={category.name}
                 icon={category.image}
+                active={isSelectedCat === category.name}
+                handleClick={() => {
+                  setIsSelectedCat(
+                    isSelectedCat === category.name ? "" : category.name
+                  );
+                }}
               />
             ))}
           </div>
@@ -85,14 +119,21 @@ export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
         Menu
       </Typography>
       <div className="flex flex-wrap items-center justify-start w-full mt-[1rem] gap-5">
-        {menus.map((menu) => (
-          <Menu
-            key={menu.id}
-            id={menu.id}
-            name={menu.name}
-            price={menu.price}
-          />
-        ))}
+        {isLoading && (
+          <Typography text={"body"} className="w-full text-center">
+            Memuat menu...
+          </Typography>
+        )}
+        {filteredMenus &&
+          filteredMenus.map((menu) => (
+            <Menu
+              key={menu.m_id}
+              id={menu.m_id}
+              name={menu.m_name}
+              price={menu.m_price}
+              image={menu.m_image || "/Menu/blank-bg.png"}
+            />
+          ))}
       </div>
     </div>
   );
@@ -110,26 +151,5 @@ const categories = [
   {
     name: "Snack",
     image: PiHamburger,
-  },
-];
-
-const menus = [
-  {
-    id: "aaa",
-    name: "Nasi Goreng",
-    price: 15000,
-    category: "Makanan",
-  },
-  {
-    id: "bbb",
-    name: "Es Teh Manis",
-    price: 5000,
-    category: "Minuman",
-  },
-  {
-    id: "ccc",
-    name: "Keripik Singkong",
-    price: 7000,
-    category: "Snack",
   },
 ];

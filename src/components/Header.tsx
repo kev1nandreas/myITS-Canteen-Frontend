@@ -66,7 +66,11 @@ export default function Header() {
           </button>
         )}
         <div>
-          <div className="flex gap-3 items-center">
+          <div
+            className={`flex gap-3 items-center ${
+              role === "guest" ? "hidden" : ""
+            }`}
+          >
             <div className="hidden md:block">
               {name ? (
                 <p>{name}</p>

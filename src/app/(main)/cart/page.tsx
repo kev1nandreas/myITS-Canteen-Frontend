@@ -11,9 +11,12 @@ import SelectDropdown from "@/components/ui/Select";
 import Switch from "@/components/ui/Switch";
 import { formatPrice } from "@/lib/utils";
 import { useFetchChairbyCanteen } from "@/services/api/hook/useCanteen";
+import { useCheckout } from "@/services/api/hook/useCheckout";
 import { typecastChairResponse } from "@/types/response";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface CartItem {
   id: number;
@@ -32,6 +35,7 @@ export default function Cart() {
   const [point] = useState(10000);
   const [chair, setChair] = useState<{ label: string; value: string }[]>([]);
   const [canteenId, setCanteenId] = useState<string>();
+  const router = useRouter();
 
   const methods = useForm({
     mode: "all",
@@ -125,24 +129,36 @@ export default function Cart() {
     }
   };
 
+  const mutation = useCheckout({
+    onSuccess: (data) => {
+      console.log("Transaction successful:", data);
+      toast.success("Pesanan berhasil dibuat!");
+      localStorage.removeItem("cart");
+      router.push("/");
+    },
+    onError: (error) => {
+      console.error("Transaction failed:", error);
+      toast.error(`Error: ${error.message || "Something went wrong"}`);
+    },
+  });
+
   if (isLoading) {
     return <Loading />;
   }
 
-  const handleSubmitForm = (data: any) => {
+  const handleSubmitForm = async (data: any) => {
     const formData = {
       ...data,
       is_dine: data.is_dine === "true",
-      totalPrice: totalPrice,
+      total_price: totalPrice,
       discount: redeem ? countDiscount() : 0,
-      time_in: `${today} ${data["time_in"]}:00`,
-      time_out: `${today} ${data["time_out"]}:00`,
       cartItems: cart.map((item) => ({
         id: item.id,
         quantity: item.quantity,
       })),
     };
-    console.log("Form submitted with data:", formData);
+    console.log("Submitting form data:", formData);
+    await mutation.mutateAsync(formData);
   };
 
   return (
@@ -320,9 +336,10 @@ export default function Cart() {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-blue-500 text-white hover:bg-blue-600 rounded-full py-2 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={mutation.isPending || cart.length === 0}
+                className={`w-full bg-blue-500 text-white hover:bg-blue-600 rounded-full py-2 mt-4`}
               >
-                Konfirmasi Pesanan
+                {mutation.isPending ? "Memproses pesanan..." : "Buat Pesanan"}
               </Button>
             </div>
           </form>

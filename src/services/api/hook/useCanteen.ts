@@ -69,3 +69,25 @@ export const useFetchChairbyCanteen = (
     queryKey: ["fetch.chair.by.canteen", canteenId],
   }) as any;
 };
+
+export const useFetchMenubyCanteen = (
+  canteenId: string,
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await get(
+        MAIN_ENDPOINT.Canteen.GetMenu.replace("$idCanteen", canteenId)
+      );
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["fetch.menu.by.canteen", canteenId],
+  }) as any;
+};

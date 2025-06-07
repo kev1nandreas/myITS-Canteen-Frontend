@@ -46,6 +46,15 @@ export interface ChairResponse {
   chair_name: string;
 }
 
+export interface MenuResponse {
+  m_id: string;
+  m_name: string;
+  m_price: number;
+  m_category: string;
+  m_image: string;
+  m_stock: number;
+}
+
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
   return data as LoginResponse | undefined;
 }
@@ -64,4 +73,8 @@ export function typecastUserResponse(data: any): UserResponse | undefined {
 
 export function typecastChairResponse(data: any): ChairResponse[] | undefined {
   return data as ChairResponse[] | undefined;
+}
+
+export function typecastMenuResponse(data: any): MenuResponse[] | undefined {
+  return data as MenuResponse[] | undefined;
 }

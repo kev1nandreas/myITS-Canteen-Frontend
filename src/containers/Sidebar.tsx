@@ -12,11 +12,7 @@ import toast from "react-hot-toast";
 import { removeCookies } from "@/modules/cookies";
 import { ENV } from "@/configs/environment";
 import { useGetMe, useGetSidebar, useSetSidebar } from "@/lib/utils";
-import {
-  MdEventSeat,
-  MdRestaurantMenu,
-  MdSpaceDashboard,
-} from "react-icons/md";
+import { MdRestaurantMenu, MdSpaceDashboard } from "react-icons/md";
 import { TbReportAnalytics } from "react-icons/tb";
 
 export default function Sidebar() {
@@ -30,6 +26,8 @@ export default function Sidebar() {
     onSuccess: () => {
       toast.success("Logout Berhasil");
       removeCookies(ENV.TOKEN_KEY);
+      localStorage.removeItem("roles");
+      localStorage.removeItem("name");
       router.push("/login");
     },
     onError: (error) => {
@@ -128,7 +126,7 @@ const menuItems = [
 const adminMenuItems = [
   { menu: "Dashboard", icon: MdSpaceDashboard, redirect: "/admin/dashboard" },
   { menu: "Pesanan", icon: IoFastFoodSharp, redirect: "/admin/orders" },
-  { menu: "Meja dan Kursi", icon: MdEventSeat, redirect: "/admin/seats" },
+  // { menu: "Meja dan Kursi", icon: MdEventSeat, redirect: "/admin/seats" },
   { menu: "Menu Kedai", icon: MdRestaurantMenu, redirect: "/admin/menu" },
   { menu: "Laporan", icon: TbReportAnalytics, redirect: "/admin/reports" },
 ];
