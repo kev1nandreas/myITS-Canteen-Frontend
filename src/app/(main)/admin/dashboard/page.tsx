@@ -20,7 +20,7 @@ function Dashboard({ user }: DashboardProps) {
     <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
       <h1 className="text-3xl font-bold">Dashboard</h1>
       <p className="opacity-50 text-sm mt-1">Hello, {user.name}</p>
-      <div className="flex justify-between my-4 flex-wrap">
+      <div className="flex justify-between my-4 flex-wrap gap-2">
         <CardDashboard
           title={"Pesanan Hari Ini"}
           description={"pesanan"}
