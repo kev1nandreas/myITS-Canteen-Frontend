@@ -47,12 +47,13 @@ export interface ChairResponse {
 }
 
 export interface MenuResponse {
-  m_id: string;
+  m_id?: string;
   m_name: string;
   m_price: number;
   m_category: string;
   m_image: string;
   m_stock: number;
+  last_modified?: string;
 }
 
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
