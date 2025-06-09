@@ -150,8 +150,11 @@ export default function Cart() {
     const formData = {
       ...data,
       is_dine: data.is_dine === "true",
+      time_in: `${today} ${timeIn || "08:00"}:00`,
+      time_out: `${today} ${timeOut || "16:00"}:00`,
       total_price: totalPrice,
       discount: redeem ? countDiscount() : 0,
+      k_id: canteenId,
       cartItems: cart.map((item) => ({
         id: item.id,
         quantity: item.quantity,
