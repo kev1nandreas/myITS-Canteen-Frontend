@@ -126,7 +126,6 @@ const menuItems = [
 const adminMenuItems = [
   { menu: "Dashboard", icon: MdSpaceDashboard, redirect: "/admin/dashboard" },
   { menu: "Pesanan", icon: IoFastFoodSharp, redirect: "/admin/orders" },
-  // { menu: "Meja dan Kursi", icon: MdEventSeat, redirect: "/admin/seats" },
   { menu: "Menu Kedai", icon: MdRestaurantMenu, redirect: "/admin/menu" },
   { menu: "Laporan", icon: TbReportAnalytics, redirect: "/admin/reports" },
 ];

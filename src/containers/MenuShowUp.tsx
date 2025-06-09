@@ -128,7 +128,7 @@ export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
           filteredMenus.map((menu) => (
             <Menu
               key={menu.m_id}
-              id={menu.m_id}
+              id={menu.m_id ?? ""}
               name={menu.m_name}
               price={menu.m_price}
               image={menu.m_image || "/Menu/blank-bg.png"}
