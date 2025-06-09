@@ -1,7 +1,9 @@
 import { formatPrice } from "@/lib/utils";
+import { useState } from "react";
 import { CgDetailsMore } from "react-icons/cg";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
 import { IoCloseCircle } from "react-icons/io5";
+import TransactionDetail from "./TransactionDetail";
 
 interface HistoryCardProps {
   id: string;
@@ -22,6 +24,8 @@ export default function HistoryCard({
   totalPrice,
   type,
 }: HistoryCardProps) {
+  const [isOpenPopUp, setIsOpenPopup] = useState(false);
+
   return (
     <div className="flex flex-col gap-4 max-w-[40rem] p-5 bg-white rounded-lg border border-gray-200">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">
@@ -56,11 +60,19 @@ export default function HistoryCard({
           <p className="text-lg font-bold">{formatPrice(totalPrice)}</p>
         </div>
         <p className="hidden md:block">Tipe: {type}</p>
-        <button className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200">
+        <button
+          onClick={() => setIsOpenPopup(true)}
+          className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200"
+        >
           <CgDetailsMore />
           Lihat Detail
         </button>
       </div>
+
+      {/* Pop Up Detail */}
+      {isOpenPopUp && (
+        <TransactionDetail handleClose={() => setIsOpenPopup(false)} />
+      )}
     </div>
   );
 }
