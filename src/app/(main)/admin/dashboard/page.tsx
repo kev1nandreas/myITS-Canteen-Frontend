@@ -17,7 +17,7 @@ interface DashboardProps {
 }
 
 function Dashboard({ user }: DashboardProps) {
-  const { data: dailyRaw, isLoading } = useFetchVendorDailies();
+  const { data: dailyRaw } = useFetchVendorDailies();
   const dailyReport = typecastDailyReportResponse(dailyRaw?.data);
 
   return (
