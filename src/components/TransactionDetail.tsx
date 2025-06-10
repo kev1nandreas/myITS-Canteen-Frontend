@@ -5,12 +5,15 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { formatPrice } from "@/lib/utils";
 import TimelineStatus from "./TimelineStatus";
+import { TransactionHistoryResponse } from "@/types/response";
 
 interface TransactionDetailProps {
+  transaction: TransactionHistoryResponse;
   handleClose: () => void;
 }
 
 export default function TransactionDetail({
+  transaction,
   handleClose,
 }: TransactionDetailProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,21 +47,29 @@ export default function TransactionDetail({
         <h1 className="text-2xl font-semibold mb-4">Detail Transaksi</h1>
         {/* General Informations */}
         <div className="flex flex-col gap-1 text-left">
-          <div className="flex gap-2 opacity-60">
-            <p className="w-[10rem]">ID:</p>
-            <p>67176-123456</p>
+          <div className="flex gap-2 opacity-60 text-sm">
+            <p className="w-[8rem]">ID:</p>
+            <p className="overflow-hidden">{transaction.t_id}</p>
           </div>
           <div className="flex gap-2">
-            <p className="w-[10rem]">Tanggal:</p>
-            <p>5 Juli 2025 12:30 AM</p>
+            <p className="w-[8rem]">Tanggal:</p>
+            <p>{transaction.t_time}</p>
           </div>
           <div className="flex gap-2">
-            <p className="w-[10rem]">Tipe:</p>
-            <p>Dine In</p>
+            <p className="w-[8rem]">Tipe:</p>
+            <p>{transaction.t_is_dine ? "Dine In" : "Take Away"}</p>
           </div>
           <div className="flex gap-2">
-            <p className="w-[10rem]">Total Harga:</p>
-            <p>{formatPrice(123000)}</p>
+            <p className="w-[8rem]">Total Harga:</p>
+            <p>{formatPrice(transaction.t_total)}</p>
+          </div>
+          <div className="flex gap-2">
+            <p className="w-[8rem]">Kursi:</p>
+            <p>
+              {transaction.reservation?.chairs
+                .map((chair) => chair.ch_name)
+                .join(", ") || "-"}
+            </p>
           </div>
         </div>
 
@@ -66,9 +77,11 @@ export default function TransactionDetail({
         <div className="flex flex-col gap-2 text-left">
           <h2 className="text-lg font-semibold">Daftar Item</h2>
           <ul className="list-disc pl-5">
-            <li>Pizza Margherita - 1 pcs</li>
-            <li>Pasta Carbonara - 2 pcs</li>
-            <li>Salad Caesar - 1 pcs</li>
+            {transaction.items.map((item) => (
+              <li key={item.m_id}>
+                {item.m_name} - {item.m_quantity} x {formatPrice(item.m_price)}
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -76,7 +89,10 @@ export default function TransactionDetail({
         <div className="flex flex-col gap-2 text-left">
           <h2 className="text-lg font-semibold">Lacak Proses</h2>
           <div className="p-3">
-            <TimelineStatus />
+            <TimelineStatus
+              status={transaction.t_status}
+              created_time={transaction.t_time}
+            />
           </div>
         </div>
       </div>

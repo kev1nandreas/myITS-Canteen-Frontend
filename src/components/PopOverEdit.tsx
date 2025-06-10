@@ -8,9 +8,13 @@ import { MenuResponse } from "@/types/response";
 import Input from "./ui/Input";
 import SelectDropdown from "./ui/Select";
 import Button from "./ui/Button";
+import toast from "react-hot-toast";
+import { useEditMenu } from "@/services/api/hook/useMenu";
+import { parseFormData } from "@/lib/utils";
 
 interface PopOverEditMenuProps {
   handleClose: () => void;
+  refetch: () => void;
   m_id: string;
   m_name: string;
   m_price: number;
@@ -21,6 +25,7 @@ interface PopOverEditMenuProps {
 
 export default function PopOverEditMenu({
   handleClose,
+  refetch,
   m_id,
   m_name,
   m_price,  
@@ -43,8 +48,24 @@ export default function PopOverEditMenu({
     AOS.init({ duration: 300 });
   }, []);
 
+  const mutation = useEditMenu({
+      idMenu: m_id,
+      onSuccess: () => {
+        toast.success("Menu berhasil diperbarui!");
+        refetch();
+        handleClose();
+      },
+      onError: (error) => {
+        console.error("Error updating menu:", error);
+        toast.error("Gagal memperbarui menu. Silakan coba lagi.");
+      },
+    });
+
   const onSubmit: SubmitHandler<MenuResponse> = async (data) => {
     console.log("Form submitted:", data);
+    data.m_image = data.m_image && data.m_image[0] ? data.m_image[0] : undefined;
+    const formData = parseFormData(data);
+    await mutation.mutateAsync(formData);
   };
 
   return (

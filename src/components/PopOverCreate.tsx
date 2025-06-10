@@ -8,13 +8,18 @@ import { MenuResponse } from "@/types/response";
 import Input from "./ui/Input";
 import SelectDropdown from "./ui/Select";
 import Button from "./ui/Button";
+import { useCreateMenu } from "@/services/api/hook/useMenu";
+import toast from "react-hot-toast";
+import { parseFormData } from "@/lib/utils";
 
 interface PopOverCreateMenuProps {
   handleClose: () => void;
+  refetch: () => void;
 }
 
 export default function PopOverCreateMenu({
   handleClose,
+  refetch,
 }: PopOverCreateMenuProps) {
   const methods = useForm<MenuResponse>();
 
@@ -22,8 +27,22 @@ export default function PopOverCreateMenu({
     AOS.init({ duration: 300 });
   }, []);
 
+  const mutation = useCreateMenu({
+    onSuccess: () => {
+      toast.success("Menu berhasil ditambahkan!");
+      refetch();
+      handleClose();
+    },
+    onError: (error) => {
+      console.error("Error creating menu:", error);
+      toast.error("Gagal menambahkan menu. Silakan coba lagi.");
+    },
+  });
+
   const onSubmit: SubmitHandler<MenuResponse> = async (data) => {
-    console.log("Form submitted:", data);
+    data.m_image = data.m_image && data.m_image[0] ? data.m_image[0] : undefined;
+    const formData = parseFormData(data);
+    await mutation.mutateAsync(formData);
   };
 
   return (
@@ -87,7 +106,10 @@ export default function PopOverCreateMenu({
             </div>
 
             <div className="flex w-full gap-3 mt-4">
-              <Button onClick={handleClose} className="rounded-full w-full bg-slate-400 hover:bg-slate-500">
+              <Button
+                onClick={handleClose}
+                className="rounded-full w-full bg-slate-400 hover:bg-slate-500"
+              >
                 Batal
               </Button>
               <Button type="submit" className="rounded-full w-full">

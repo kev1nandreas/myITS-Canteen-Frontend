@@ -34,6 +34,10 @@ function Profile({ user }: ProfileProps) {
           <p className="opacity-70">{user.email}</p>
         </div>
         <div className="flex justify-between items-center border-t border-gray-200 p-4">
+          <p className="font-semibold">Poin</p>
+          <p className="opacity-70">{user.point}</p>
+        </div>
+        <div className="flex justify-between items-center border-t border-gray-200 p-4">
           <p className="font-semibold">Akses</p>
           <p className="opacity-70">{user.role}</p>
         </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import PopOverCreateMenu from "@/components/PopOverCreate";
@@ -5,28 +6,33 @@ import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/Search";
 import MenuTable from "@/components/ui/Table-Menu";
 import { withAuth } from "@/lib/hoc/withAuth";
+import { useFetchVendorMenu } from "@/services/api/hook/useVendor";
 import { PATH } from "@/shared/path";
+import { typecastMenuResponse } from "@/types/response";
 import { useEffect, useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
 function MenusPage() {
   const [filterMenus, setFilterMenus] = useState("");
+  const { data: menusRaw, isLoading, refetch } = useFetchVendorMenu();
+  const menus = typecastMenuResponse(menusRaw?.data) || [];
   const [filteredMenus, setFilteredMenus] = useState(menus);
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
-      if (filterMenus.trim() === "") {
-        setFilteredMenus(menus);
-      } else {
-        const lowerCaseFilter = filterMenus.toLowerCase();
-        const filtered = menus.filter((menu) =>
-          menu.name.toLowerCase().includes(lowerCaseFilter)
+      if (filterMenus) {
+        const lowerFilter = filterMenus.toLowerCase();
+        setFilteredMenus(
+          menus.filter((menu) =>
+            menu.m_name.toLowerCase().includes(lowerFilter)
+          )
         );
-        setFilteredMenus(filtered);
+      } else {
+        setFilteredMenus(menus);
       }
     }, 1000);
-  }, [filterMenus]);
+  }, [filterMenus, menus]);
 
   return (
     <div className="md:w-[80%] flex flex-col h-[calc(100vh-4rem)] p-[2rem] overflow-auto">
@@ -52,13 +58,23 @@ function MenusPage() {
 
       {isAdding && (
         <PopOverCreateMenu
+          refetch={refetch}
           handleClose={() => {
             setIsAdding(false);
           }}
         />
       )}
-
-      <MenuTable rows={filteredMenus} />
+      {isLoading && (
+        <div className="flex justify-center items-center h-full">
+          <p>Loading...</p>
+        </div>
+      )}
+      {!isLoading && menus.length === 0 && (
+        <div className="flex justify-center items-center h-full">
+          <p>Tidak ada menu yang ditemukan.</p>
+        </div>
+      )}
+      {!isLoading && <MenuTable rows={filteredMenus} refetch={refetch} />}
     </div>
   );
 }
@@ -67,33 +83,3 @@ export default withAuth(MenusPage, {
   allowedRoles: ["admin"],
   redirectTo: PATH.ADMIN,
 });
-
-const menus = [
-  {
-    id: "aaa",
-    name: "Nasi Goreng",
-    price: 15000,
-    category: "Makanan",
-    image: "",
-    stock: 20,
-    last_modified: "",
-  },
-  {
-    id: "bbb",
-    name: "Es Teh Manis",
-    price: 5000,
-    category: "Minuman",
-    image: "",
-    stock: 50,
-    last_modified: "",
-  },
-  {
-    id: "ccc",
-    name: "Keripik Singkong",
-    price: 7000,
-    category: "Snack",
-    image: "",
-    stock: 30,
-    last_modified: "",
-  },
-];

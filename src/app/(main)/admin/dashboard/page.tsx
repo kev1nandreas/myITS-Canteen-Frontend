@@ -5,8 +5,9 @@ import BarChart from "@/components/ui/Bar-Chart";
 import DoughnutChart from "@/components/ui/Doughnut-Chart";
 import { withAuth } from "@/lib/hoc/withAuth";
 import { formatPrice } from "@/lib/utils";
+import { useFetchVendorDailies } from "@/services/api/hook/useVendor";
 import { PATH } from "@/shared/path";
-import { UserResponse } from "@/types/response";
+import { typecastDailyReportResponse, UserResponse } from "@/types/response";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import { IoPersonOutline } from "react-icons/io5";
 import { MdOutlineFastfood, MdOutlineSell } from "react-icons/md";
@@ -16,6 +17,9 @@ interface DashboardProps {
 }
 
 function Dashboard({ user }: DashboardProps) {
+  const { data: dailyRaw, isLoading } = useFetchVendorDailies();
+  const dailyReport = typecastDailyReportResponse(dailyRaw?.data);
+
   return (
     <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -25,28 +29,28 @@ function Dashboard({ user }: DashboardProps) {
           title={"Pesanan Hari Ini"}
           description={"pesanan"}
           Icon={MdOutlineSell}
-          value={20}
+          value={dailyReport?.transaction_count || 0}
           className="bg-gradient-to-r from-blue-600 to-blue-400 text-white"
         />
         <CardDashboard
           title={"Menu Terjual Hari Ini"}
           description={"porsi"}
           Icon={MdOutlineFastfood}
-          value={20}
+          value={dailyReport?.total_purchased || 0}
           className="bg-gradient-to-r from-green-600 to-green-400 text-white"
         />
         <CardDashboard
           title={"Pendapatan Hari Ini"}
           description={""}
           Icon={CiMoneyCheck1}
-          value={formatPrice(123456)}
+          value={formatPrice(dailyReport?.total_earnings || 0)}
           className="bg-gradient-to-r from-yellow-600 to-yellow-400 text-white"
         />
         <CardDashboard
           title={"Pengunjung Hari Ini"}
           description={"orang"}
           Icon={IoPersonOutline}
-          value={20}
+          value={dailyReport?.unique_customers || 0}
           className="bg-gradient-to-r from-purple-600 to-purple-400 text-white"
         />
       </div>

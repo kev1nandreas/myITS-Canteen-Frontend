@@ -9,10 +9,12 @@ import Loading from "@/components/ui/LoadingUI";
 import RadioButton from "@/components/ui/Radio-Button";
 import SelectDropdown from "@/components/ui/Select";
 import Switch from "@/components/ui/Switch";
+import { withAuth } from "@/lib/hoc/withAuth";
 import { formatPrice } from "@/lib/utils";
 import { useFetchChairbyCanteen } from "@/services/api/hook/useCanteen";
 import { useCheckout } from "@/services/api/hook/useCheckout";
-import { typecastChairResponse } from "@/types/response";
+import { PATH } from "@/shared/path";
+import { typecastChairResponse, UserResponse } from "@/types/response";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -26,13 +28,17 @@ interface CartItem {
   image: string;
 }
 
-export default function Cart() {
+interface ProfileProps {
+  user: UserResponse;
+}
+
+function Cart({ user }: ProfileProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isDineIn, setIsDineIn] = useState(false);
   const [redeem, setRedeem] = useState(false);
-  const [point] = useState(10000);
+  const [point] = useState(user.point || 0);
   const [chair, setChair] = useState<{ label: string; value: string }[]>([]);
   const [canteenId, setCanteenId] = useState<string>();
   const router = useRouter();
@@ -68,7 +74,6 @@ export default function Cart() {
     if (!timeIn || !timeOut) return;
     setTimeout(() => {
       refetchChair();
-      console.log("Chairs available:");
       if (chairData) {
         const chairs =
           typecastChairResponse(chairData.data)?.map((chair) => ({
@@ -130,8 +135,7 @@ export default function Cart() {
   };
 
   const mutation = useCheckout({
-    onSuccess: (data) => {
-      console.log("Transaction successful:", data);
+    onSuccess: () => {
       toast.success("Pesanan berhasil dibuat!");
       localStorage.removeItem("cart");
       router.push("/");
@@ -160,7 +164,6 @@ export default function Cart() {
         quantity: item.quantity,
       })),
     };
-    console.log("Submitting form data:", formData);
     await mutation.mutateAsync(formData);
   };
 
@@ -351,6 +354,11 @@ export default function Cart() {
     </div>
   );
 }
+
+export default withAuth(Cart, {
+  redirectTo: PATH.AUTH.LOGIN,
+  allowedRoles: ["user", "admin"],
+});
 
 const transMethods = [
   { label: "Cash", value: "cash" },

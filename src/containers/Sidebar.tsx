@@ -88,7 +88,7 @@ export default function Sidebar() {
             ))}
           {role === "guest" &&
             menuItems
-              .slice(0, 2)
+              .slice(0, 1)
               .map((item, index) => (
                 <MenuSidebar
                   key={index}

@@ -40,7 +40,7 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
   };
 
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg">
+    <div className="shadow-md rounded-lg">
       <table className="min-w-full table-auto">
         <thead className="bg-blue-400 text-white">
           <tr>

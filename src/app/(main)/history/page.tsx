@@ -3,11 +3,17 @@
 import HistoryCard from "@/components/HistoryCard";
 import Tabs from "@/components/ui/Tabs";
 import { withAuth } from "@/lib/hoc/withAuth";
+import { useFetchTransaction } from "@/services/api/hook/useTransaction";
 import { PATH } from "@/shared/path";
+import { typecastTransactionHistoryResponse } from "@/types/response";
 import { useState } from "react";
 
 function History() {
   const [activeTab, setActiveTab] = useState("validasi");
+  const { data: transactionRaw } = useFetchTransaction();
+  const transactions = typecastTransactionHistoryResponse(
+    transactionRaw?.data || []
+  );
 
   return (
     <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
@@ -23,25 +29,26 @@ function History() {
         ))}
       </div>
       <div className="flex flex-col gap-4">
-        {Transaction.filter((transaction) => {
-          if (activeTab === "validasi")
-            return transaction.status === "validasi";
-          if (activeTab === "selesai") return transaction.status === "selesai";
-          if (activeTab === "ditolak") return transaction.status === "ditolak";
-          return true;
-        }).map((transaction) => (
-          <HistoryCard
-            key={transaction.id}
-            id={transaction.id}
-            date={transaction.date}
-            time={transaction.time}
-            status={transaction.status}
-            items={transaction.items}
-            totalPrice={transaction.totalPrice}
-            type={transaction.type}
-          />
-        ))}
+        {transactions &&
+          transactions
+            .filter((transaction) => {
+              if (activeTab === "Menunggu Validasi")
+                return transaction.t_status === "Menunggu Validasi";
+              if (activeTab === "selesai")
+                return transaction.t_status === "selesai";
+              if (activeTab === "ditolak")
+                return transaction.t_status === "ditolak";
+              return true;
+            })
+            .map((transaction) => (
+              <HistoryCard key={transaction.t_id} transaction={transaction} />
+            ))}
       </div>
+      {transactions && transactions.length === 0 && (
+        <p className="text-center text-gray-500 mt-4">
+          Tidak ada transaksi yang ditemukan.
+        </p>
+      )}
     </div>
   );
 }
@@ -67,53 +74,5 @@ const FilterTabs = [
   {
     label: "Semua",
     value: "semua",
-  },
-];
-
-const Transaction = [
-  {
-    id: "3455a010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "4 Juni 2025",
-    time: "12.24 PM",
-    status: "selesai",
-    items: ["Nasi Goreng", "Ayam Penyet", "Es Teh Manis"],
-    totalPrice: 45000,
-    type: "Dine In",
-  },
-  {
-    id: "1234b010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "5 Juni 2025",
-    time: "1.30 PM",
-    status: "validasi",
-    items: ["Mie Goreng", "Sate Ayam"],
-    totalPrice: 30000,
-    type: "Take Away",
-  },
-  {
-    id: "5678c010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "6 Juni 2025",
-    time: "3.15 PM",
-    status: "ditolak",
-    items: ["Nasi Campur", "Teh Botol"],
-    totalPrice: 25000,
-    type: "Dine In",
-  },
-  {
-    id: "9101d010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "7 Juni 2025",
-    time: "2.00 PM",
-    status: "selesai",
-    items: ["Bakso", "Es Jeruk"],
-    totalPrice: 40000,
-    type: "Dine In",
-  },
-  {
-    id: "1121e010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "8 Juni 2025",
-    time: "11.45 AM",
-    status: "validasi",
-    items: ["Soto Ayam", "Kerupuk"],
-    totalPrice: 35000,
-    type: "Take Away",
   },
 ];
