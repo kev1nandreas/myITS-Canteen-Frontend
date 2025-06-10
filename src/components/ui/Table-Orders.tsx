@@ -4,7 +4,6 @@ import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import Confirmation from "./Confirmation";
 import { useState } from "react";
-import TransactionDetail from "../TransactionDetail";
 
 interface RowData {
   id: string;
@@ -19,7 +18,7 @@ interface RowData {
 export default function OrderTable({ rows }: { rows: RowData[] }) {
   const [isOpenDelete, setIsOpenDelete] = useState<string | null>(null);
   const [isOpenAccept, setIsOpenAccept] = useState<string | null>(null);
-  const [isOpenPopUp, setIsOpenPopup] = useState(false);
+  const [, setIsOpenPopup] = useState(false);
 
   const handleCancel = () => {
     setIsOpenDelete(null);
@@ -125,9 +124,9 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
       </table>
 
       {/* Pop Up Detail */}
-      {isOpenPopUp && (
-        <TransactionDetail handleClose={() => setIsOpenPopup(false)} />
-      )}
+      {/* {isOpenPopUp && (
+        <TransactionDetail handleClose={() => setIsOpenPopup(false)} transaction={undefined} />
+      )} */}
     </div>
   );
 }
