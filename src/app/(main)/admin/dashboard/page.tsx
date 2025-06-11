@@ -77,23 +77,37 @@ function Dashboard({ user }: DashboardProps) {
           <h1 className="text-xl font-semibold">
             Data Penjualan Periode 1 Minggu Terakhir
           </h1>
-          <BarChart
-            labels={dates}
-            labels_title="Pendapatan Harian"
-            data={totalEarnings}
-            classname="w-full"
-          />
+          {dates.length === 0 ? (
+            <p className="text-gray-500">
+              Tidak ada data penjualan atau belum ada transaksi yang
+              terselesaikan.
+            </p>
+          ) : (
+            <BarChart
+              labels={dates}
+              labels_title="Pendapatan Harian"
+              data={totalEarnings}
+              classname="w-full"
+            />
+          )}
         </div>
         <div className="flex flex-col gap-3 flex-2/5 bg-white p-5 rounded-lg border border-gray-200">
           <h1 className="text-xl font-semibold">
             Menu Terlaris Periode 1 Minggu Terakhir
           </h1>
-          <DoughnutChart
-            labels={labels}
-            labels_title="Penjualan Menu"
-            data={data}
-            classname="w-[22rem]"
-          />
+          {labels.length === 0 ? (
+            <p className="text-gray-500">
+              Tidak ada data penjualan atau belum ada transaksi yang
+              terselesaikan.
+            </p>
+          ) : (
+            <DoughnutChart
+              labels={labels}
+              labels_title="Penjualan Menu"
+              data={data}
+              classname="w-[22rem]"
+            />
+          )}
         </div>
       </div>
     </div>
