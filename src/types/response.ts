@@ -55,7 +55,7 @@ export interface MenuResponse {
   m_image?: string;
   m_stock: number;
   last_modified?: string;
-  m_quantity?: number;
+  td_quantity?: number;
 }
 
 export interface TransactionHistoryResponse {
