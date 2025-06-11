@@ -22,20 +22,20 @@ export default function HistoryCard({ transaction }: HistoryCardProps) {
         </div>
         <p
           className={`text-green-500 flex items-center gap-1 ${
-            transaction.t_status === "selesai"
+            transaction.t_status === "Selesai"
               ? "text-green-500"
               : transaction.t_status === "Menunggu Konfirmasi"
               ? "text-yellow-500"
               : "text-red-500"
           }`}
         >
-          {transaction.t_status === "selesai" && <FaCheckCircle />}
+          {transaction.t_status === "Selesai" && <FaCheckCircle />}
           {transaction.t_status === "Menunggu Konfirmasi" && <FaClock />}
-          {transaction.t_status === "ditolak" && <IoCloseCircle />}
-          {transaction.t_status === "selesai" && "Selesai"}
+          {transaction.t_status === "Ditolak" && <IoCloseCircle />}
+          {transaction.t_status === "Selesai" && "Selesai"}
           {transaction.t_status === "Menunggu Konfirmasi" &&
             "Menunggu Konfirmasi"}
-          {transaction.t_status === "ditolak" && "Ditolak"}
+          {transaction.t_status === "Ditolak" && "Ditolak"}
         </p>
       </div>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">

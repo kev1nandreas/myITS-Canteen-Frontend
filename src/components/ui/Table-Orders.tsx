@@ -61,7 +61,7 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
                 {formatPrice(row.totalPrice)}
               </td>
               <td className="px-6 py-4 text-center whitespace-nowrap">
-                {row.status === "selesai" ? (
+                {row.status === "Selesai" ? (
                   <span className="text-green-600">Selesai</span>
                 ) : row.status === "validasi" ? (
                   <span className="text-yellow-500">Validasi</span>

@@ -9,11 +9,19 @@ import { typecastTransactionHistoryResponse } from "@/types/response";
 import { useState } from "react";
 
 function History() {
-  const [activeTab, setActiveTab] = useState("validasi");
-  const { data: transactionRaw } = useFetchTransaction();
+  const [activeTab, setActiveTab] = useState("Menunggu Konfirmasi");
+  const { data: transactionRaw, isLoading } = useFetchTransaction();
   const transactions = typecastTransactionHistoryResponse(
     transactionRaw?.data || []
   );
+
+  const filteredTransactions = transactions?.filter((transaction) => {
+    if (activeTab === "Menunggu Konfirmasi")
+      return transaction.t_status === "Menunggu Konfirmasi";
+    if (activeTab === "Selesai") return transaction.t_status === "Selesai";
+    if (activeTab === "Ditolak") return transaction.t_status === "Ditolak";
+    return true;
+  });
 
   return (
     <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
@@ -29,22 +37,15 @@ function History() {
         ))}
       </div>
       <div className="flex flex-col gap-4">
-        {transactions &&
-          transactions
-            .filter((transaction) => {
-              if (activeTab === "Menunggu Validasi")
-                return transaction.t_status === "Menunggu Validasi";
-              if (activeTab === "selesai")
-                return transaction.t_status === "selesai";
-              if (activeTab === "ditolak")
-                return transaction.t_status === "ditolak";
-              return true;
-            })
-            .map((transaction) => (
-              <HistoryCard key={transaction.t_id} transaction={transaction} />
-            ))}
+        {filteredTransactions &&
+          filteredTransactions.map((transaction) => (
+            <HistoryCard key={transaction.t_id} transaction={transaction} />
+          ))}
       </div>
-      {transactions && transactions.length === 0 && (
+      {isLoading && (
+        <p className="text-center text-gray-500 mt-4">Memuat transaksi...</p>
+      )}
+      {transactions && filteredTransactions && !isLoading && filteredTransactions.length === 0 && (
         <p className="text-center text-gray-500 mt-4">
           Tidak ada transaksi yang ditemukan.
         </p>
@@ -60,16 +61,16 @@ export default withAuth(History, {
 
 const FilterTabs = [
   {
-    label: "Validasi",
-    value: "validasi",
+    label: "Menunggu Konfirmasi",
+    value: "Menunggu Konfirmasi",
   },
   {
     label: "Selesai",
-    value: "selesai",
+    value: "Selesai",
   },
   {
     label: "Ditolak",
-    value: "ditolak",
+    value: "Ditolak",
   },
   {
     label: "Semua",

@@ -27,7 +27,7 @@ export default function MenuShowUp({ canteenName }: MenuShowUpProps) {
   const kedaisFetched =
     typecastVendorResponse(data?.data)?.map((vendor) => ({
       label: vendor.v_name,
-      value: vendor.v_id,
+      value: vendor.v_name,
     })) || [];
   const kedais = [{ label: "Semua Kedai", value: "all" }, ...kedaisFetched];
 

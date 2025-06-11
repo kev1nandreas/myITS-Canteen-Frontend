@@ -10,6 +10,7 @@ import PopOverEditMenu from "../PopOverEdit";
 import { MenuResponse } from "@/types/response";
 import { useDeleteMenu } from "@/services/api/hook/useMenu";
 import toast from "react-hot-toast";
+import { ENV } from "@/configs/environment";
 
 interface MenuTableProps {
   rows: MenuResponse[];
@@ -73,7 +74,11 @@ export default function MenuTable({ rows, refetch }: MenuTableProps) {
                 <div className="flex justify-center">
                   <div className="flex items-center justify-center w-[4rem] h-[4rem] rounded-xl bg-gray-100 overflow-hidden">
                     <Image
-                      src={row.m_image || "/Menu/blank-bg.png"}
+                      src={
+                        row.m_image?.startsWith("storage/")
+                          ? `${ENV.URI.BASE_IMAGE_URL}${row.m_image}`
+                          : row.m_image || "/Menu/blank-bg.png"
+                      }
                       alt={"Image of " + row.m_name}
                       width={100}
                       height={100}
