@@ -11,7 +11,7 @@ interface ProfileProps {
 
 function Profile({ user }: ProfileProps) {
   return (
-    <div className="flex flex-col w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto">
+    <div className="flex flex-col w-full md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto">
       <h1 className="text-3xl font-bold">Profil</h1>
       {/* Header */}
       <div className="flex gap-6 mt-4 items-center bg-white p-4 rounded-lg border border-gray-200 max-w-[40rem]">
