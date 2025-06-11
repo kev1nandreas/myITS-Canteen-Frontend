@@ -33,7 +33,7 @@ export default function TimelineStatus({
             </div>
           </>
         )}
-        {status === "ditolak" && (
+        {status === "Ditolak" && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full z-10"></div>
             <div className="flex justify-between w-full">
@@ -42,7 +42,7 @@ export default function TimelineStatus({
             </div>
           </div>
         )}
-        {status === "selesai" && (
+        {status === "Selesai" && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full z-10"></div>
             <div className="flex justify-between w-full">

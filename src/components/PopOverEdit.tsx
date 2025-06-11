@@ -10,7 +10,6 @@ import SelectDropdown from "./ui/Select";
 import Button from "./ui/Button";
 import toast from "react-hot-toast";
 import { useEditMenu } from "@/services/api/hook/useMenu";
-import { parseFormData } from "@/lib/utils";
 
 interface PopOverEditMenuProps {
   handleClose: () => void;
@@ -28,7 +27,7 @@ export default function PopOverEditMenu({
   refetch,
   m_id,
   m_name,
-  m_price,  
+  m_price,
   m_category,
   m_image,
   m_stock,
@@ -49,23 +48,29 @@ export default function PopOverEditMenu({
   }, []);
 
   const mutation = useEditMenu({
-      idMenu: m_id,
-      onSuccess: () => {
-        toast.success("Menu berhasil diperbarui!");
-        refetch();
-        handleClose();
-      },
-      onError: (error) => {
-        console.error("Error updating menu:", error);
-        toast.error("Gagal memperbarui menu. Silakan coba lagi.");
-      },
-    });
+    idMenu: m_id,
+    onSuccess: () => {
+      toast.success("Menu berhasil diperbarui!");
+      refetch();
+      handleClose();
+    },
+    onError: (error) => {
+      console.error("Error updating menu:", error);
+      toast.error("Gagal memperbarui menu. Silakan coba lagi.");
+    },
+  });
 
   const onSubmit: SubmitHandler<MenuResponse> = async (data) => {
-    console.log("Form submitted:", data);
-    data.m_image = data.m_image && data.m_image[0] ? data.m_image[0] : undefined;
-    const formData = parseFormData(data);
+    const formData = new FormData();
+    formData.append("m_name", data.m_name || "");
+    formData.append("m_price", data.m_price?.toString() || "0");
+    formData.append("m_category", data.m_category || "");
+    formData.append("m_stock", data.m_stock?.toString() || "0");
+    if (data.m_image) {
+      formData.append("m_image", data.m_image);
+    }
     await mutation.mutateAsync(formData);
+    console.log("Form Data Submitted:", data);
   };
 
   return (
@@ -74,9 +79,7 @@ export default function PopOverEditMenu({
       data-aos="fade-in"
     >
       <div className="w-[30rem] h-fit flex m-2 flex-col gap-y-6 bg-white p-8 rounded-2xl">
-        <h1 className="text-2xl font-semibold mb-4 text-center">
-          Edit Menu
-        </h1>
+        <h1 className="text-2xl font-semibold mb-4 text-center">Edit Menu</h1>
         <FormProvider {...methods}>
           <form
             onSubmit={methods.handleSubmit(onSubmit)}
@@ -110,14 +113,7 @@ export default function PopOverEditMenu({
                 }}
               />
             </div>
-            <Input
-              id={"m_image"}
-              label={"Gambar Menu"}
-              type="file"
-              validation={{
-                required: "Gambar harus diunggah",
-              }}
-            />
+            <Input id={"m_image"} label={"Gambar Menu"} type="file" />
             <div className="flex flex-col gap-1">
               <label htmlFor="m_category">Kategori</label>
               <SelectDropdown
@@ -129,11 +125,16 @@ export default function PopOverEditMenu({
             </div>
 
             <div className="flex w-full gap-3 mt-4">
-              <Button onClick={handleClose} className="rounded-full w-full bg-slate-400 hover:bg-slate-500">
-                Batal
-              </Button>
-              <Button type="submit" className="rounded-full w-full">
-                Tambahkan
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className={`rounded-full w-full ${
+                  mutation.isPending
+                    ? "bg-blue-400"
+                    : "bg-blue-600 hover:bg-blue-500"
+                }`}
+              >
+                {mutation.isPending ? "Mengubah..." : "Ubah Menu"}
               </Button>
             </div>
           </form>

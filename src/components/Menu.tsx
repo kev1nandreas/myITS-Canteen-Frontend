@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import Counter from "./ui/Counter";
+import { ENV } from "@/configs/environment";
 
 interface CategoryProps {
   id: string;
@@ -73,10 +74,15 @@ export default function Menu({ id, name, price, image }: CategoryProps) {
       <div className="flex flex-col justify-center items-center gap-5 opacity-70">
         <div className="flex items-center justify-center w-[6rem] h-[6rem] rounded-full bg-gray-100 overflow-hidden">
           <Image
-            src={image || "/Menu/blank-bg.png"}
+            src={
+              image?.startsWith("storage/")
+                ? `${ENV.URI.BASE_IMAGE_URL}${image}`
+                : image || "/Menu/blank-bg.png"
+            }
             alt={"Image of " + name}
             width={200}
             height={200}
+            className="object-cover w-full h-full"
           />
         </div>
         <div className="flex flex-col items-center">

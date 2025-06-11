@@ -5,15 +5,15 @@ import { MAIN_ENDPOINT } from "../main/endpoint";
 import { get } from "../main/call";
 
 export const useFetchMenubyVendor = (
-  vendorId: string,
+  vendorName: string,
   onSuccess?: () => void,
   onError?: () => void
 ) => {
   return useQuery({
     queryFn: async () => {
-      const { Kind, OK } = await get(
-        MAIN_ENDPOINT.Vendor.GetMenus.replace("$idVendor", vendorId)
-      );
+      const { Kind, OK } = await get(MAIN_ENDPOINT.Vendor.GetMenusByVendor, {
+        v_name: vendorName,
+      });
       if (!OK) {
         throw new Error(
           (Kind as { message: string }).message ||
@@ -22,7 +22,7 @@ export const useFetchMenubyVendor = (
       }
       return Kind;
     },
-    queryKey: ["fetch.menu.by.vendor", vendorId],
+    queryKey: ["fetch.menu.by.vendor", vendorName],
   }) as any;
 };
 
@@ -32,9 +32,7 @@ export const useFetchVendorMenu = (
 ) => {
   return useQuery({
     queryFn: async () => {
-      const { Kind, OK } = await get(
-        MAIN_ENDPOINT.Menu.GetMenus
-      );
+      const { Kind, OK } = await get(MAIN_ENDPOINT.Menu.GetMenus);
       if (!OK) {
         throw new Error(
           (Kind as { message: string }).message ||
@@ -53,9 +51,7 @@ export const useFetchVendorDailies = (
 ) => {
   return useQuery({
     queryFn: async () => {
-      const { Kind, OK } = await get(
-        MAIN_ENDPOINT.Vendor.GetDailyReports
-      );
+      const { Kind, OK } = await get(MAIN_ENDPOINT.Vendor.GetDailyReports);
       if (!OK) {
         throw new Error(
           (Kind as { message: string }).message ||

@@ -40,8 +40,12 @@ export default function PopOverCreateMenu({
   });
 
   const onSubmit: SubmitHandler<MenuResponse> = async (data) => {
-    data.m_image = data.m_image && data.m_image[0] ? data.m_image[0] : undefined;
+    data.m_image =
+      data.m_image && data.m_image[0] ? data.m_image[0] : undefined;
     const formData = parseFormData(data);
+    if (formData.get("m_image") === undefined) {
+      formData.delete("m_image");
+    }
     await mutation.mutateAsync(formData);
   };
 
@@ -112,8 +116,16 @@ export default function PopOverCreateMenu({
               >
                 Batal
               </Button>
-              <Button type="submit" className="rounded-full w-full">
-                Tambahkan
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className={`rounded-full w-full ${
+                  mutation.isPending
+                    ? "bg-blue-400"
+                    : "bg-blue-600 hover:bg-blue-500"
+                }`}
+              >
+                {mutation.isPending ? "Menambahkan..." : "Tambah Menu"}
               </Button>
             </div>
           </form>

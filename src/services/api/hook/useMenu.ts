@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation } from "@tanstack/react-query";
-import { del, post, put } from "../main/call";
+import { del, post } from "../main/call";
 import { MAIN_ENDPOINT } from "../main/endpoint";
 
 export const useCreateMenu = ({
@@ -38,7 +38,7 @@ export const useEditMenu = ({
 }) => {
   return useMutation({
     mutationFn: async (body: FormData) => {
-      const { Kind, OK } = await put(
+      const { Kind, OK } = await post(
         MAIN_ENDPOINT.Menu.EditMenu.replace("$idMenu", idMenu),
         body
       );
@@ -69,7 +69,7 @@ export const useDeleteMenu = ({
   return useMutation({
     mutationFn: async () => {
       const { Kind, OK } = await del(
-        MAIN_ENDPOINT.Menu.EditMenu.replace("$idMenu", idMenu)
+        MAIN_ENDPOINT.Menu.DeleteMenu.replace("$idMenu", idMenu)
       );
       if (!OK) {
         throw new Error(

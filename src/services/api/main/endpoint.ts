@@ -16,12 +16,13 @@ export const MAIN_ENDPOINT = {
 		GetTransactionHistory: "transactions/user",
 	},
 	Vendor: {
-		GetMenus: "vendors/$idVendor/menus",
+		GetMenusByVendor: "vendors/menus",
 		GetDailyReports: "vendors/daily-data",
 	},
 	Menu: {
 		GetMenus: "menus",
 		CreateMenu: "menus",
-		EditMenu: "menus/$idMenu",
+		DeleteMenu: "menus/$idMenu",
+		EditMenu: "menus/update/$idMenu",
 	},
 };
