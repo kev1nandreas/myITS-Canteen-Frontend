@@ -37,11 +37,13 @@ export default function RootLayout({
       >
         <ProviderReduxToolkit>
           <QueryProvider>
-            <Header />
-            <div className="flex justify-between">
-              <Toaster position="top-center" />
-              <Sidebar />
-              {children}
+            <div className="flex flex-col h-screen inset-0 fixed">
+              <Header />
+              <div className="flex justify-between overflow-hidden h-[calc(100vh-4rem)]">
+                <Toaster position="top-center" />
+                <Sidebar />
+                {children}
+              </div>
             </div>
           </QueryProvider>
         </ProviderReduxToolkit>

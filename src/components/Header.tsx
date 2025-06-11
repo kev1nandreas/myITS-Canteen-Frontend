@@ -1,6 +1,6 @@
 "use client";
-import { CiLogin } from "react-icons/ci";
 
+import { CiLogin } from "react-icons/ci";
 import {
   decrypt,
   useGetMe,
@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { IoMdMenu } from "react-icons/io";
 
+let isInitialized = false;
+
 export default function Header() {
   const setAuth = useSetMe();
   const { name, role } = useGetMe();
@@ -21,15 +23,17 @@ export default function Header() {
   const [isOpenSidebar, setIsOpenSidebar] = useState(isOpen);
 
   useEffect(() => {
+    if (isInitialized) return;
     const encryptedName = window.localStorage.getItem("name");
     const encryptedRole = window.localStorage.getItem("roles");
     const name = encryptedName ? decrypt(encryptedName) : "Guest";
     const role = encryptedRole ? decrypt(encryptedRole) : "guest";
     setAuth.setMe(role, name);
+    isInitialized = true;
   }, [setAuth]);
 
   return (
-    <header className="flex items-center h-[4rem] border-b-[1px] border-slate-300 bg-white justify-between px-[2rem]">
+    <header className="flex top-0 items-center h-[4rem] border-b-[1px] border-slate-300 bg-white justify-between px-[2rem]">
       <div className="flex items-center cursor-pointer">
         <IoMdMenu
           className="text-2xl mr-[1.5rem] md:hidden"
@@ -62,8 +66,18 @@ export default function Header() {
           </button>
         )}
         <div>
-          <div className="flex gap-3 items-center">
-            <p className="md:block hidden">{name}</p>
+          <div
+            className={`flex gap-3 items-center ${
+              role === "guest" ? "hidden" : ""
+            }`}
+          >
+            <div className="hidden md:block">
+              {name ? (
+                <p>{name}</p>
+              ) : (
+                <div className="h-5 w-[100px] bg-gray-200 rounded-lg animate-pulse" />
+              )}
+            </div>
             <div className="p-3 rounded-full bg-gradient-to-br from-blue-600 to-blue-300 text-white font-semibold">
               <FaRegUser />
             </div>
