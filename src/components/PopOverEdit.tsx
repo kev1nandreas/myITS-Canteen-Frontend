@@ -66,7 +66,7 @@ export default function PopOverEditMenu({
     formData.append("m_price", data.m_price?.toString() || "0");
     formData.append("m_category", data.m_category || "");
     formData.append("m_stock", data.m_stock?.toString() || "0");
-    if (data.m_image) {
+    if (data.m_image && typeof data.m_image === "object") {
       formData.append("m_image", data.m_image);
     }
     await mutation.mutateAsync(formData);
@@ -125,6 +125,12 @@ export default function PopOverEditMenu({
             </div>
 
             <div className="flex w-full gap-3 mt-4">
+              <Button
+                onClick={handleClose}
+                className="rounded-full w-full bg-slate-400 hover:bg-slate-500"
+              >
+                Batal
+              </Button>
               <Button
                 type="submit"
                 disabled={mutation.isPending}
