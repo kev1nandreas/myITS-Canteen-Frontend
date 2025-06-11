@@ -87,6 +87,32 @@ export interface DailyReportResponse {
   unique_customers: number | 0;
 }
 
+export interface weeklySalesResponse {
+  period: {
+    from: string;
+    to: string;
+  };
+  total_sales_last_week: number;
+  sales_per_day: {
+    date: string;
+    daily_total: number;
+  }[];
+}
+
+export interface topMenuResponse {
+  period: {
+    from: string;
+    to: string;
+  };
+  top_menus: {
+    menu_id: string;
+    menu_name: string;
+    total_sold: number;
+    percentage: number;
+  }[];
+  total_menus_sold_last_week: number;
+}
+
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
   return data as LoginResponse | undefined;
 }
@@ -125,4 +151,16 @@ export function typecastDailyReportResponse(
   data: any
 ): DailyReportResponse | undefined {
   return data as DailyReportResponse | undefined;
+}
+
+export function typecastWeeklySalesResponse(
+  data: any
+): weeklySalesResponse | undefined {
+  return data as weeklySalesResponse | undefined;
+}
+
+export function typecastTopMenuResponse(
+  data: any
+): topMenuResponse | undefined {
+  return data as topMenuResponse | undefined;
 }

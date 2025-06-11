@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import CryptoJS from "crypto-js";
+import { topMenuResponse, weeklySalesResponse } from "@/types/response";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -75,4 +76,43 @@ export const formatPrice = (price: number): string => {
   })
     .format(price)
     .replace("IDR", "Rp");
+};
+
+export const formatWeeklyEarnings = (
+  earnings: weeklySalesResponse | undefined
+): any => {
+  const dates: string[] = [];
+  const totalEarnings: number[] = [];
+
+  if (earnings && earnings.sales_per_day) {
+    for (const earning in earnings.sales_per_day) {
+      dates.push(earnings.sales_per_day[earning].date);
+      totalEarnings.push(earnings.sales_per_day[earning].daily_total);
+    }
+  }
+  return { dates, totalEarnings };
+};
+
+export const formatTopMenu = (topMenu: topMenuResponse | undefined): any => {
+  const labels: string[] = [];
+  const data: number[] = [];
+  let totalMenusSold = 0;
+
+  if (topMenu && topMenu.top_menus) {
+    for (const menu in topMenu.top_menus) {
+      labels.push(topMenu.top_menus[menu].menu_name);
+      data.push(topMenu.top_menus[menu].total_sold);
+
+      totalMenusSold += topMenu.top_menus[menu].total_sold;
+    }
+
+    const others = topMenu.total_menus_sold_last_week - totalMenusSold;
+
+    if (others > 0) {
+      labels.push("Lainnya");
+      data.push(others);
+    }
+  }
+
+  return { labels, data };
 };

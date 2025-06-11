@@ -64,3 +64,41 @@ export const useFetchVendorDailies = (
     refetchInterval: 1000 * 60 * 3,
   }) as any;
 };
+
+export const useFetchVendorWeeklySales = (
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await get(MAIN_ENDPOINT.Vendor.GetWeeklySales);
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["fetch.vendor.weekly.sales"],
+  }) as any;
+};
+
+export const useFetchVendorTopMenus = (
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await get(MAIN_ENDPOINT.Vendor.GetTopMenus);
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["fetch.vendor.top.menus"],
+  }) as any;
+};

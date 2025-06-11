@@ -3,7 +3,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { MAIN_ENDPOINT } from "../main/endpoint";
-import { get } from "../main/call";
+import { get, post } from "../main/call";
 
 export const useFetchTransaction = (
   onSuccess?: () => void,
@@ -23,5 +23,63 @@ export const useFetchTransaction = (
       return Kind;
     },
     queryKey: ["fetch.transaction"],
+  }) as any;
+};
+
+export const useAcceptTransaction = ({
+  idTransaction,
+  onSuccess,
+  onError,
+}: {
+  idTransaction: string;
+  onSuccess: (data: any) => void;
+  onError: (error: any) => void;
+}) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await post(
+        MAIN_ENDPOINT.Transaction.AcceptTransaction.replace(
+          "$idTransaction",
+          idTransaction
+        )
+      );
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["accept.transaction"],
+  }) as any;
+};
+
+export const useRejectTransaction = ({
+  idTransaction,
+  onSuccess,
+  onError,
+}: {
+  idTransaction: string;
+  onSuccess: (data: any) => void;
+  onError: (error: any) => void;
+}) => {
+  return useQuery({
+    queryFn: async () => {
+      const { Kind, OK } = await post(
+        MAIN_ENDPOINT.Transaction.RejectTransaction.replace(
+          "$idTransaction",
+          idTransaction
+        )
+      );
+      if (!OK) {
+        throw new Error(
+          (Kind as { message: string }).message ||
+            (Kind as { Message: string }).Message
+        );
+      }
+      return Kind;
+    },
+    queryKey: ["accept.transaction"],
   }) as any;
 };

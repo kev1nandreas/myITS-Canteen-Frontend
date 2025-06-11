@@ -4,10 +4,19 @@ import CardDashboard from "@/components/CardDashboard";
 import BarChart from "@/components/ui/Bar-Chart";
 import DoughnutChart from "@/components/ui/Doughnut-Chart";
 import { withAuth } from "@/lib/hoc/withAuth";
-import { formatPrice } from "@/lib/utils";
-import { useFetchVendorDailies } from "@/services/api/hook/useVendor";
+import { formatPrice, formatTopMenu, formatWeeklyEarnings } from "@/lib/utils";
+import {
+  useFetchVendorDailies,
+  useFetchVendorTopMenus,
+  useFetchVendorWeeklySales,
+} from "@/services/api/hook/useVendor";
 import { PATH } from "@/shared/path";
-import { typecastDailyReportResponse, UserResponse } from "@/types/response";
+import {
+  typecastDailyReportResponse,
+  typecastTopMenuResponse,
+  typecastWeeklySalesResponse,
+  UserResponse,
+} from "@/types/response";
 import { CiMoneyCheck1 } from "react-icons/ci";
 import { IoPersonOutline } from "react-icons/io5";
 import { MdOutlineFastfood, MdOutlineSell } from "react-icons/md";
@@ -18,7 +27,16 @@ interface DashboardProps {
 
 function Dashboard({ user }: DashboardProps) {
   const { data: dailyRaw } = useFetchVendorDailies();
+  const { data: weeklySalesRaw } = useFetchVendorWeeklySales();
+  const { data: topMenusRaw } = useFetchVendorTopMenus();
+
+  // Typecasting the raw data to the expected response types
   const dailyReport = typecastDailyReportResponse(dailyRaw?.data);
+  const weeklySales = typecastWeeklySalesResponse(weeklySalesRaw?.data);
+  const topMenus = typecastTopMenuResponse(topMenusRaw?.data);
+
+  const { dates, totalEarnings } = formatWeeklyEarnings(weeklySales);
+  const { labels, data } = formatTopMenu(topMenus);
 
   return (
     <div className="flex flex-col md:w-[80%] h-[calc(100vh-4rem)] p-[2rem] overflow-y-auto w-full">
@@ -57,23 +75,23 @@ function Dashboard({ user }: DashboardProps) {
       <div className="flex gap-5 flex-wrap md:flex-nowrap mt-[1rem]">
         <div className="flex flex-col gap-3 flex-3/5 bg-white p-5 rounded-lg border border-gray-200">
           <h1 className="text-xl font-semibold">
-            Data Penjualan Periode 1 - 31 Juli 2025
+            Data Penjualan Periode 1 Minggu Terakhir
           </h1>
           <BarChart
-            labels={["January", "February", "March", "April", "May"]}
-            labels_title="Monthly Sales"
-            data={[12, 19, 3, 5, 2]}
+            labels={dates}
+            labels_title="Pendapatan Harian"
+            data={totalEarnings}
             classname="w-full"
           />
         </div>
         <div className="flex flex-col gap-3 flex-2/5 bg-white p-5 rounded-lg border border-gray-200">
           <h1 className="text-xl font-semibold">
-            Menu Terlaris Periode 1 - 31 Juli 2025
+            Menu Terlaris Periode 1 Minggu Terakhir
           </h1>
           <DoughnutChart
-            labels={["January", "February", "March", "April", "May"]}
-            labels_title="Monthly Sales"
-            data={[12, 19, 3, 5, 2]}
+            labels={labels}
+            labels_title="Penjualan Menu"
+            data={data}
             classname="w-[22rem]"
           />
         </div>

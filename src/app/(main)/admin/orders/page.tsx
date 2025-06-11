@@ -7,7 +7,7 @@ import { PATH } from "@/shared/path";
 import { useState } from "react";
 
 function OrdersPage() {
-  const [activeTab, setActiveTab] = useState("validasi");
+  const [activeTab, setActiveTab] = useState("Menunggu Konfirmasi");
 
   return (
     <div className="md:w-[80%] flex flex-col h-[calc(100vh-4rem)] p-[2rem] overflow-auto">
@@ -22,7 +22,7 @@ function OrdersPage() {
           />
         ))}
       </div>
-      <OrderTable rows={Transaction} />
+      <OrderTable rows={Transaction} refetch={() => {}} />
     </div>
   );
 }
@@ -34,8 +34,8 @@ export default withAuth(OrdersPage, {
 
 const FilterTabs = [
   {
-    label: "Validasi",
-    value: "validasi",
+    label: "Menunggu Konfirmasi",
+    value: "Menunggu Konfirmasi",
   },
   {
     label: "Selesai",
@@ -65,7 +65,7 @@ const Transaction = [
     id: "1234b010-e57c-4af8-a1cf-e33ca08aa21f",
     date: "5 Juni 2025",
     time: "1.30 PM",
-    status: "validasi",
+    status: "Menunggu Konfirmasi",
     name: "Siti Aminah",
     totalPrice: 30000,
     type: "Take Away",
@@ -92,7 +92,7 @@ const Transaction = [
     id: "1121e010-e57c-4af8-a1cf-e33ca08aa21f",
     date: "8 Juni 2025",
     time: "11.45 AM",
-    status: "validasi",
+    status: "Menunggu Konfirmasi",
     name: "Rudi Hartono",
     totalPrice: 35000,
     type: "Take Away",

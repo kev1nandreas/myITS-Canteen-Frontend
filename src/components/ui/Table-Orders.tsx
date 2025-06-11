@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { formatPrice } from "@/lib/utils";
 import { CgDetailsMore } from "react-icons/cg";
 import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import Confirmation from "./Confirmation";
 import { useState } from "react";
+import { useAcceptTransaction, useRejectTransaction } from "@/services/api/hook/useTransaction";
+import toast from "react-hot-toast";
 
 interface RowData {
   id: string;
@@ -15,18 +18,49 @@ interface RowData {
   type: string;
 }
 
-export default function OrderTable({ rows }: { rows: RowData[] }) {
-  const [isOpenDelete, setIsOpenDelete] = useState<string | null>(null);
+interface OrderTableProps {
+  rows: RowData[];
+  refetch: () => void;
+}
+
+export default function OrderTable({ rows, refetch }: OrderTableProps) {
+  const [isOpenReject, setIsOpenReject] = useState<string | null>(null);
   const [isOpenAccept, setIsOpenAccept] = useState<string | null>(null);
   const [, setIsOpenPopup] = useState(false);
 
+  const mutationReject = useRejectTransaction({
+    idTransaction: isOpenReject || "",
+    onSuccess: () => {
+      toast.success("Transaksi berhasil ditolak!");
+      setIsOpenReject(null);
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error rejecting transaction:", error);
+      toast.error("Gagal menolak transaksi. Silakan coba lagi.");
+    },
+  });
+
+  const mutationAccept = useAcceptTransaction({
+    idTransaction: isOpenAccept || "",
+    onSuccess: () => {
+      toast.success("Transaksi berhasil diterima!");
+      setIsOpenAccept(null);
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error accepting transaction:", error);
+      toast.error("Gagal menerima transaksi. Silakan coba lagi.");
+    },
+  });
+
   const handleCancel = () => {
-    setIsOpenDelete(null);
+    setIsOpenReject(null);
   };
 
-  const handleDelete = (id: string) => {
+  const handleReject = (id: string) => {
     console.log(`Deleting menu with id: ${id}`);
-    setIsOpenDelete(null);
+    setIsOpenReject(null);
   };
 
   const handleCancelAccept = () => {
@@ -63,14 +97,14 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
               <td className="px-6 py-4 text-center whitespace-nowrap">
                 {row.status === "Selesai" ? (
                   <span className="text-green-600">Selesai</span>
-                ) : row.status === "validasi" ? (
-                  <span className="text-yellow-500">Validasi</span>
+                ) : row.status === "Menunggu Konfirmasi" ? (
+                  <span className="text-yellow-500">Menunggu Konfirmasi</span>
                 ) : (
                   <span className="text-red-500">Ditolak</span>
                 )}
               </td>
               <td className="flex gap-2 px-6 py-4 text-center whitespace-nowrap items-center justify-center">
-                {row.status === "validasi" && (
+                {row.status === "Menunggu Konfirmasi" && (
                   <>
                     <button
                       onClick={() => {
@@ -82,7 +116,7 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
                     </button>
                     <button
                       onClick={() => {
-                        setIsOpenDelete(row.id);
+                        setIsOpenReject(row.id);
                       }}
                       className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200"
                     >
@@ -100,10 +134,10 @@ export default function OrderTable({ rows }: { rows: RowData[] }) {
                 </button>
 
                 {/* Confirmation */}
-                {isOpenDelete === row.id && (
+                {isOpenReject === row.id && (
                   <Confirmation
                     onCancel={handleCancel}
-                    onConfirm={() => handleDelete(row.id)}
+                    onConfirm={() => handleReject(row.id)}
                     object={"pesanan ini"}
                     type={"delete"}
                   />
