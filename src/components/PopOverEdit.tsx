@@ -67,10 +67,9 @@ export default function PopOverEditMenu({
     formData.append("m_category", data.m_category || "");
     formData.append("m_stock", data.m_stock?.toString() || "0");
     if (data.m_image && typeof data.m_image === "object") {
-      formData.append("m_image", data.m_image);
+      formData.append("m_image", data.m_image[0]);
     }
     await mutation.mutateAsync(formData);
-    console.log("Form Data Submitted:", data);
   };
 
   return (

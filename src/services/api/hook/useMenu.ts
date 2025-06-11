@@ -48,7 +48,6 @@ export const useEditMenu = ({
             (Kind as { Message: string }).Message
         );
       }
-      console.log("Edit Menu Response:", Kind);
       return Kind;
     },
     mutationKey: ["edit.menu", idMenu],
