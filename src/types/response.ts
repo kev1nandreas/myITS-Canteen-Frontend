@@ -66,7 +66,9 @@ export interface TransactionHistoryResponse {
   t_discount: number;
   t_payment: string;
   t_status: string;
-  validated_time: string;
+  c_id: string;
+  c_name: string;
+  last_modified: string;
   items: MenuResponse[];
   reservation: {
     r_id: string;

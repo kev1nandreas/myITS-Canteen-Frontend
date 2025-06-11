@@ -1,32 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { formatPrice } from "@/lib/utils";
 import { CgDetailsMore } from "react-icons/cg";
 import { CiCircleCheck } from "react-icons/ci";
 import { RxCrossCircled } from "react-icons/rx";
 import Confirmation from "./Confirmation";
 import { useState } from "react";
-import { useAcceptTransaction, useRejectTransaction } from "@/services/api/hook/useTransaction";
+import {
+  useAcceptTransaction,
+  useRejectTransaction,
+} from "@/services/api/hook/useTransaction";
 import toast from "react-hot-toast";
-
-interface RowData {
-  id: string;
-  date: string;
-  time: string;
-  status: string;
-  name: string;
-  totalPrice: number;
-  type: string;
-}
+import { TransactionHistoryResponse } from "@/types/response";
+import TransactionDetail from "../TransactionDetail";
 
 interface OrderTableProps {
-  rows: RowData[];
+  transactions: TransactionHistoryResponse[];
   refetch: () => void;
 }
 
-export default function OrderTable({ rows, refetch }: OrderTableProps) {
+export default function OrderTable({ transactions, refetch }: OrderTableProps) {
   const [isOpenReject, setIsOpenReject] = useState<string | null>(null);
   const [isOpenAccept, setIsOpenAccept] = useState<string | null>(null);
-  const [, setIsOpenPopup] = useState(false);
+  const [isOpenPopUp, setIsOpenPopup] = useState<string | null>(null);
 
   const mutationReject = useRejectTransaction({
     idTransaction: isOpenReject || "",
@@ -58,8 +52,8 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
     setIsOpenReject(null);
   };
 
-  const handleReject = (id: string) => {
-    console.log(`Deleting menu with id: ${id}`);
+  const handleReject = async () => {
+    await mutationReject.mutateAsync();
     setIsOpenReject(null);
   };
 
@@ -67,13 +61,13 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
     setIsOpenAccept(null);
   };
 
-  const handleAccept = (id: string) => {
-    console.log(`Accepting order with id: ${id}`);
+  const handleAccept = async () => {
+    await mutationAccept.mutateAsync();
     setIsOpenAccept(null);
   };
 
   return (
-    <div className="shadow-md rounded-lg">
+    <div className="shadow-md rounded-lg overflow-auto">
       <table className="min-w-full table-auto">
         <thead className="bg-blue-400 text-white">
           <tr>
@@ -85,30 +79,32 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {rows.map((row) => (
-            <tr key={row.id} className="hover:bg-gray-100">
-              <td className="px-6 py-4 whitespace-nowrap">{row.name}</td>
-              <td className="px-6 py-4 text-center whitespace-nowrap">
-                {row.date + " " + row.time}
+          {transactions.map((transaction) => (
+            <tr key={transaction.t_id} className="hover:bg-gray-100">
+              <td className="px-6 py-4 whitespace-nowrap">
+                {transaction.c_name || "-"}
               </td>
               <td className="px-6 py-4 text-center whitespace-nowrap">
-                {formatPrice(row.totalPrice)}
+                {transaction.t_time}
               </td>
               <td className="px-6 py-4 text-center whitespace-nowrap">
-                {row.status === "Selesai" ? (
+                {formatPrice(transaction.t_total)}
+              </td>
+              <td className="px-6 py-4 text-center whitespace-nowrap">
+                {transaction.t_status === "Selesai" ? (
                   <span className="text-green-600">Selesai</span>
-                ) : row.status === "Menunggu Konfirmasi" ? (
+                ) : transaction.t_status === "Menunggu Konfirmasi" ? (
                   <span className="text-yellow-500">Menunggu Konfirmasi</span>
                 ) : (
                   <span className="text-red-500">Ditolak</span>
                 )}
               </td>
               <td className="flex gap-2 px-6 py-4 text-center whitespace-nowrap items-center justify-center">
-                {row.status === "Menunggu Konfirmasi" && (
+                {transaction.t_status === "Menunggu Konfirmasi" && (
                   <>
                     <button
                       onClick={() => {
-                        setIsOpenAccept(row.id);
+                        setIsOpenAccept(transaction.t_id);
                       }}
                       className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200"
                     >
@@ -116,7 +112,7 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
                     </button>
                     <button
                       onClick={() => {
-                        setIsOpenReject(row.id);
+                        setIsOpenReject(transaction.t_id);
                       }}
                       className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200"
                     >
@@ -126,7 +122,7 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
                 )}
                 <button
                   onClick={() => {
-                    setIsOpenPopup(true);
+                    setIsOpenPopup(transaction.t_id);
                   }}
                   className="flex items-center justify-center p-1 px-2 rounded-lg cursor-pointer gap-2 border border-gray-200 hover:bg-gray-100 transition-colors ease-in-out duration-200"
                 >
@@ -134,21 +130,29 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
                 </button>
 
                 {/* Confirmation */}
-                {isOpenReject === row.id && (
+                {isOpenReject === transaction.t_id && (
                   <Confirmation
                     onCancel={handleCancel}
-                    onConfirm={() => handleReject(row.id)}
+                    onConfirm={() => handleReject()}
                     object={"pesanan ini"}
                     type={"delete"}
                   />
                 )}
 
-                {isOpenAccept === row.id && (
+                {isOpenAccept === transaction.t_id && (
                   <Confirmation
                     onCancel={handleCancelAccept}
-                    onConfirm={() => handleAccept(row.id)}
-                    object={row.name}
+                    onConfirm={() => handleAccept()}
+                    object={transaction.c_name || "-"}
                     type={"accept"}
+                  />
+                )}
+
+                {/* Pop Up Detail */}
+                {isOpenPopUp === transaction.t_id && (
+                  <TransactionDetail
+                    handleClose={() => setIsOpenPopup(null)}
+                    transaction={transaction}
                   />
                 )}
               </td>
@@ -156,11 +160,6 @@ export default function OrderTable({ rows, refetch }: OrderTableProps) {
           ))}
         </tbody>
       </table>
-
-      {/* Pop Up Detail */}
-      {/* {isOpenPopUp && (
-        <TransactionDetail handleClose={() => setIsOpenPopup(false)} transaction={undefined} />
-      )} */}
     </div>
   );
 }

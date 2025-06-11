@@ -92,6 +92,7 @@ export default function TransactionDetail({
             <TimelineStatus
               status={transaction.t_status}
               created_time={transaction.t_time}
+              last_modified={transaction.last_modified}
             />
           </div>
         </div>

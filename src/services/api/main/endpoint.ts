@@ -14,6 +14,7 @@ export const MAIN_ENDPOINT = {
 	Transaction: {
 		CreateTransaction: "transactions",
 		GetTransactionHistory: "transactions/user",
+		GetVendorTransactionHistory: "transactions/vendor",
 		AcceptTransaction: "accept-transaction/$idTransaction",
 		RejectTransaction: "reject-transaction/$idTransaction",
 	},

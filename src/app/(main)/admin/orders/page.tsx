@@ -3,11 +3,29 @@
 import OrderTable from "@/components/ui/Table-Orders";
 import Tabs from "@/components/ui/Tabs";
 import { withAuth } from "@/lib/hoc/withAuth";
+import { useFetchVendorTransaction } from "@/services/api/hook/useTransaction";
 import { PATH } from "@/shared/path";
+import { typecastTransactionHistoryResponse } from "@/types/response";
 import { useState } from "react";
 
 function OrdersPage() {
   const [activeTab, setActiveTab] = useState("Menunggu Konfirmasi");
+  const {
+    data: transactionRaw,
+    refetch,
+    isLoading,
+  } = useFetchVendorTransaction();
+  const transactions = typecastTransactionHistoryResponse(
+    transactionRaw?.data || []
+  );
+
+  const filteredTransactions = transactions?.filter((transaction) => {
+    if (activeTab === "Menunggu Konfirmasi")
+      return transaction.t_status === "Menunggu Konfirmasi";
+    if (activeTab === "Selesai") return transaction.t_status === "Selesai";
+    if (activeTab === "Ditolak") return transaction.t_status === "Ditolak";
+    return true;
+  });
 
   return (
     <div className="md:w-[80%] flex flex-col h-[calc(100vh-4rem)] p-[2rem] overflow-auto">
@@ -22,7 +40,25 @@ function OrdersPage() {
           />
         ))}
       </div>
-      <OrderTable rows={Transaction} refetch={() => {}} />
+      {isLoading && (
+        <p className="text-center text-gray-500 mt-4">Memuat pesanan...</p>
+      )}
+      {transactions &&
+        filteredTransactions &&
+        !isLoading &&
+        filteredTransactions.length === 0 && (
+          <p className="text-center text-gray-500 mt-4">
+            Tidak ada pesanan yang ditemukan.
+          </p>
+        )}
+      {!isLoading &&
+        filteredTransactions &&
+        filteredTransactions.length > 0 && (
+          <OrderTable
+            transactions={filteredTransactions || []}
+            refetch={refetch}
+          />
+        )}
     </div>
   );
 }
@@ -48,53 +84,5 @@ const FilterTabs = [
   {
     label: "Semua",
     value: "semua",
-  },
-];
-
-const Transaction = [
-  {
-    id: "3455a010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "4 Juni 2025",
-    time: "12.24 PM",
-    status: "Selesai",
-    name: "Yudi Suristro",
-    totalPrice: 45000,
-    type: "Dine In",
-  },
-  {
-    id: "1234b010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "5 Juni 2025",
-    time: "1.30 PM",
-    status: "Menunggu Konfirmasi",
-    name: "Siti Aminah",
-    totalPrice: 30000,
-    type: "Take Away",
-  },
-  {
-    id: "5678c010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "6 Juni 2025",
-    time: "3.15 PM",
-    status: "Ditolak",
-    name: "Budi Santoso",
-    totalPrice: 25000,
-    type: "Dine In",
-  },
-  {
-    id: "9101d010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "7 Juni 2025",
-    time: "2.00 PM",
-    status: "Selesai",
-    name: "Ani Pratiwi",
-    totalPrice: 40000,
-    type: "Dine In",
-  },
-  {
-    id: "1121e010-e57c-4af8-a1cf-e33ca08aa21f",
-    date: "8 Juni 2025",
-    time: "11.45 AM",
-    status: "Menunggu Konfirmasi",
-    name: "Rudi Hartono",
-    totalPrice: 35000,
-    type: "Take Away",
   },
 ];
