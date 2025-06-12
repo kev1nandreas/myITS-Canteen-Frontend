@@ -39,7 +39,7 @@ function Profile({ user }: ProfileProps) {
         </div>
         <div className="flex justify-between items-center border-t border-gray-200 p-4">
           <p className="font-semibold">Akses</p>
-          <p className="opacity-70">{user.role}</p>
+          <p className="opacity-70">{user.role === "admin" ? "Vendor" : "User"}</p>
         </div>
       </div>
     </div>

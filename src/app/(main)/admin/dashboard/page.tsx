@@ -1,8 +1,8 @@
 "use client";
 
 import CardDashboard from "@/components/CardDashboard";
-import BarChart from "@/components/ui/Bar-Chart";
 import DoughnutChart from "@/components/ui/Doughnut-Chart";
+import LineChart from "@/components/ui/Line-Chart";
 import { withAuth } from "@/lib/hoc/withAuth";
 import { formatPrice, formatTopMenu, formatWeeklyEarnings } from "@/lib/utils";
 import {
@@ -83,11 +83,11 @@ function Dashboard({ user }: DashboardProps) {
               terselesaikan.
             </p>
           ) : (
-            <BarChart
+            <LineChart
               labels={dates}
               labels_title="Pendapatan Harian"
               data={totalEarnings}
-              classname="w-full"
+              className="w-full h-full"
             />
           )}
         </div>
@@ -105,7 +105,7 @@ function Dashboard({ user }: DashboardProps) {
               labels={labels}
               labels_title="Penjualan Menu"
               data={data}
-              classname="w-[22rem]"
+              classname="w-full"
             />
           )}
         </div>
