@@ -55,7 +55,7 @@ export interface MenuResponse {
   m_image?: string;
   m_stock: number;
   last_modified?: string;
-  m_quantity?: number;
+  td_quantity?: number;
 }
 
 export interface TransactionHistoryResponse {
@@ -115,6 +115,16 @@ export interface topMenuResponse {
   total_menus_sold_last_week: number;
 }
 
+export interface MonthlyWeeklyReportResponse {
+  view: "monthly" | "weekly";
+  records: {
+    week_start?: string;
+    week_end?: string;
+    month?: string;
+    total_revenue: number;
+  }[];
+}
+
 export function typecastLoginResponse(data: any): LoginResponse | undefined {
   return data as LoginResponse | undefined;
 }
@@ -165,4 +175,10 @@ export function typecastTopMenuResponse(
   data: any
 ): topMenuResponse | undefined {
   return data as topMenuResponse | undefined;
+}
+
+export function typecastMonthlyWeeklyReportResponse(
+  data: any
+): MonthlyWeeklyReportResponse | undefined {
+  return data as MonthlyWeeklyReportResponse | undefined;
 }

@@ -79,7 +79,7 @@ export default function TransactionDetail({
           <ul className="list-disc pl-5">
             {transaction.items.map((item) => (
               <li key={item.m_id}>
-                {item.m_name} - {item.m_quantity} x {formatPrice(item.m_price)}
+                {item.m_name} - {item.td_quantity} x {formatPrice(item.m_price)}
               </li>
             ))}
           </ul>

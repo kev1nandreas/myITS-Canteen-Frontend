@@ -21,6 +21,7 @@ export const MAIN_ENDPOINT = {
 	Vendor: {
 		GetMenusByVendor: "vendors/menus",
 		GetDailyReports: "vendors/daily-data",
+		GetMonthlyWeeklyReport: "sales-report",
 		GetWeeklySales: "sales-last-week",
 		GetTopMenus: "top-menu-last-week",
 	},

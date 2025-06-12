@@ -3,7 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import CryptoJS from "crypto-js";
-import { topMenuResponse, weeklySalesResponse } from "@/types/response";
+import { MonthlyWeeklyReportResponse, topMenuResponse, weeklySalesResponse } from "@/types/response";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -116,3 +116,22 @@ export const formatTopMenu = (topMenu: topMenuResponse | undefined): any => {
 
   return { labels, data };
 };
+
+export const formatReportData = (data: MonthlyWeeklyReportResponse | undefined): any => {
+  const labels: string[] = [];
+  const dataValues: number[] = [];
+
+  if (data && data.records) {
+    for (const record of data.records) {
+      if (data.view === "weekly") {
+        labels.push(`${record.week_start} - ${record.week_end}`);
+      } else {
+        labels.push(record.month || "");
+      }
+      dataValues.push(record.total_revenue);
+    }
+  }
+
+  return { labels, dataValues };
+}
+
